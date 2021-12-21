@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hit.waterallocationpolicysimulator.view.SimulatorController">
+   <items>
+    <AnchorPane maxHeight="50.0" style="-fx-background-color: #018286;">
+         <children>
+            <ImageView fx:id="logoImageView" fitHeight="150.0" fitWidth="200.0" layoutX="6.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/HIT_logo_50_years_c.jpg" />
+               </image></ImageView>
+             <StackPane fx:id="exitSimStackPane" layoutX="775.0" onMouseClicked="#exitSimHandler">
+                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="hand-cursor-hover">
+                     <image>
+                         <Image url="@../../../../images/exit.png" />
+                     </image>
+                 </ImageView>
+             </StackPane>
+             <StackPane fx:id="minimizeSimStackPane" layoutX="750.0" onMouseClicked="#minimizeSimHandler">
+                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="hand-cursor-hover">
+                     <image>
+                         <Image url="@../../../../images/minimize.png" />
+                     </image>
+                 </ImageView>
+             </StackPane>
+            <Label layoutX="206.0" layoutY="36.0" text="Water Allocation Policy Simulator" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="32.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <SplitPane dividerPositions="0.2857142857142857">
+         <items>
+          <AnchorPane>
+               <children>
+                   <Button fx:id="btnMicroSimulation" layoutX="43.0" layoutY="40.0" onAction="#onHelloButtonClick" prefWidth="150.0" text="Micro Simulation" />
+                  <Button fx:id="btnMacroSimulation" layoutX="43.0" layoutY="80.0" mnemonicParsing="false" prefWidth="150.0" text="Macro Simulation" />
+                  <Button fx:id="btnConfiguration" layoutX="43.0" layoutY="120.0" mnemonicParsing="false" prefWidth="150.0" text="Configuration" />
+                  <Button fx:id="btnAbout" layoutX="43.0" layoutY="160.0" mnemonicParsing="false" prefWidth="150.0" text="About" />
+               
+                                                    <Label fx:id="welcomeText" layoutX="80.0" layoutY="267.0" prefHeight="17.0" prefWidth="67.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane>
+               <children>
+                  <StackPane fx:id="stackPaneAllScreens" prefHeight="474.0" prefWidth="582.0" style="-fx-background-color: fffff;" />
+               </children>
+            </AnchorPane>
+         </items>
+      </SplitPane>
+   </items>
+</SplitPane>

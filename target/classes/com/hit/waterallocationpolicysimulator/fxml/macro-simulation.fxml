@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<fx:root prefHeight="474.0" prefWidth="582.0" type="Pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="474.0" prefWidth="582.0">
+          <children>
+              <Label layoutX="137.0" layoutY="21.0" prefHeight="61.0" prefWidth="309.0" text="Macro Simulation" textFill="#95949a">
+                  <font>
+                      <Font name="System Bold" size="36.0" />
+                  </font>
+              </Label>
+            <Button layoutX="273.0" layoutY="421.0" mnemonicParsing="false" text="Run" />
+            <Label layoutX="39.0" layoutY="96.0" text="Last time micro simulation was run:" />
+            <Label layoutX="236.0" layoutY="96.0" text="00:00 01/01/5555" />
+          </children>
+      
+      </AnchorPane>
+   </children>
+</fx:root>
