@@ -17,6 +17,11 @@ public class MacroSimulationController extends Pane
         return instance;
     }
 
+    private void runSimulation()
+    {
+
+    }
+
     private MacroSimulationController()
     {
         loadView();

@@ -9,9 +9,9 @@
    <children>
       <AnchorPane prefHeight="474.0" prefWidth="582.0">
          <children>
-            <Label layoutX="255.0" layoutY="8.0" prefHeight="74.0" prefWidth="107.0" text="About" textFill="#2c10e1">
+            <Label layoutX="255.0" layoutY="8.0" prefHeight="74.0" prefWidth="107.0" text="About" textFill="#95949a">
                <font>
-                  <Font size="36.0" />
+                  <Font name="System Bold" size="36.0" />
                </font>
             </Label>
             <Label layoutX="50.0" layoutY="128.0" prefHeight="35.0" prefWidth="312.0" text="Moderator: Dr. Eyal Brill">

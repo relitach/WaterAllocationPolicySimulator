@@ -1,10 +1,12 @@
 package com.hit.waterallocationpolicysimulator.view;
 
 import com.hit.waterallocationpolicysimulator.SimulatorMain;
+import com.hit.waterallocationpolicysimulator.utils.SimTypes;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import animatefx.animation.FadeIn;
 import java.io.IOException;
+
 
 public class MicroSimulationController extends Pane
 {
@@ -20,6 +22,22 @@ public class MicroSimulationController extends Pane
     private MicroSimulationController()
     {
         loadView();
+    }
+
+    private void runSimulation(SimTypes.PolicyType policyType)
+    {
+        if(policyType == SimTypes.PolicyType.QUANTITY)
+        {
+
+        }
+        else if (policyType == SimTypes.PolicyType.PRICE)
+        {
+
+        }
+        else
+        {
+            System.out.println("NO DEAL");
+        }
     }
 
     private Pane loadView() {

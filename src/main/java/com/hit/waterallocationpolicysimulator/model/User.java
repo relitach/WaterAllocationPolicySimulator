@@ -5,8 +5,13 @@ public class User
 
     private String id;
     private double amountOfMoney;
-    private String demandFunction; // פונקציית ביקוש
-    private String dasd;
+    private double amountOfQuantity;
+    private String demandFunction; // Bikush Function
+    private String slopeOfDemandFunction; // Shipua
+    private String interceptOfDemandFunction; // Hituh
+
+
+    
 
 
 
