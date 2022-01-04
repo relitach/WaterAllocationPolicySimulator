@@ -1,6 +1,7 @@
 package com.hit.waterallocationpolicysimulator.view;
 
 import com.hit.waterallocationpolicysimulator.SimulatorMain;
+import com.hit.waterallocationpolicysimulator.model.User;
 import com.hit.waterallocationpolicysimulator.utils.SimTypes;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -26,11 +27,26 @@ public class MicroSimulationController extends Pane
 
     private void runSimulation(SimTypes.PolicyType policyType)
     {
-        if(policyType == SimTypes.PolicyType.QUANTITY)
+        // load list of users from file
+
+        if(policyType == SimTypes.PolicyType.QUANTITY)  // Active market
         {
+            // u = f(q)-w*q
+
+            int n = 20; // Number of pair of people. need to get from gui
+            double w = 10 ; // The price of unit of water. need to get from gui
+
+
+            for(int i =0; i < n ; i++)
+            {
+
+                User userA = new User(1,1,1,"","","");
+                User userB = new User(2,1,1,"","","");
+            }
+
 
         }
-        else if (policyType == SimTypes.PolicyType.PRICE)
+        else if (policyType == SimTypes.PolicyType.PRICE) // Passive market
         {
 
         }
