@@ -53,7 +53,7 @@
             </AnchorPane>
           <AnchorPane>
                <children>
-                  <StackPane fx:id="stackPaneAllScreens" prefHeight="674.0" prefWidth="756.0" style="-fx-background-color: fffff;" />
+                  <StackPane fx:id="stackPaneAllScreens" prefHeight="674.0" prefWidth="756.0" />
                </children>
             </AnchorPane>
          </items>

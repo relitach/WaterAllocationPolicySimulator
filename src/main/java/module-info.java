@@ -4,8 +4,7 @@ module com.hit.ariel.waterallocationpolicysimulator {
     requires AnimateFX;
     requires opencsv;
 
-
-    opens com.hit.waterallocationpolicysimulator to javafx.fxml, javafx.base;
+    opens com.hit.waterallocationpolicysimulator to javafx.fxml;
     exports com.hit.waterallocationpolicysimulator;
     exports com.hit.waterallocationpolicysimulator.view;
     opens com.hit.waterallocationpolicysimulator.view to javafx.fxml;
