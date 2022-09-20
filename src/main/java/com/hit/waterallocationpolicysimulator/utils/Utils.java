@@ -1,10 +1,20 @@
 package com.hit.waterallocationpolicysimulator.utils;
 
+import com.hit.waterallocationpolicysimulator.model.User;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +31,7 @@ public class Utils
         Tooltip tooltip = new Tooltip();
         final double deltaX = direction == SimTypes.ShowNodeFrom.LEFT ? -2 : 2;
         node.setOnMouseEntered(event -> {
-            timer = ThreadManger.getInstance().getScheduledThreadPool().schedule(() -> {
+            timer = ThreadManager.getInstance().getScheduledThreadPool().schedule(() -> {
                 Platform.runLater(() -> {
                     tooltip.setText(msg);
                     tooltip.setFont(Font.font(12));
@@ -45,4 +55,40 @@ public class Utils
             timer = null;
         }
     }
+
+
+    public static List<User> parseCSVFileToUserList(File file)
+    {
+        List<User> usersList = new ArrayList<User>();
+
+        try (CSVReader reader = new CSVReader(new FileReader(file)))
+        {
+            List<String[]> csvList = reader.readAll();
+            for (String[] row : csvList)
+            {
+                if(row[0].contains("id"))
+                {
+                    continue;
+                }
+                System.out.println(Arrays.toString(row));
+                int id = Integer.parseInt(row[0]);
+                int amountOfMoney = Integer.parseInt(row[0]);;
+                int alpha = Integer.parseInt(row[0]);;
+                int demandFunction = Integer.parseInt(row[0]);;
+                int slopeOfDemandFunction = Integer.parseInt(row[0]);;
+                int interceptOfDemandFunction = Integer.parseInt(row[0]);;
+//                usersList.add(new User(id, ));
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CsvException e) {
+            e.printStackTrace();
+        }
+
+        return usersList;
+    }
+
 }

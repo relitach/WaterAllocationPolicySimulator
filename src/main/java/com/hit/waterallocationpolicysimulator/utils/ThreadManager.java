@@ -7,20 +7,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class ThreadManger {
+public class ThreadManager {
 //    private static Logger logger = LogManager.getLogger(ThreadManger.class);
-    private static ThreadManger instance = null;
+    private static ThreadManager instance = null;
     private ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(15);
     private final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
 
-    private ThreadManger() {
+    private ThreadManager() {
 
     }
 
-    public static ThreadManger getInstance() {
+    public static ThreadManager getInstance() {
         if (instance == null) {
 //            logger.debug("Create ThreadManger ");
-            instance = new ThreadManger();
+            instance = new ThreadManager();
         }
         return instance;
     }

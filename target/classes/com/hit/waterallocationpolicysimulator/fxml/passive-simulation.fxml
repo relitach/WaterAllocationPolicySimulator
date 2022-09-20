@@ -8,13 +8,16 @@
    <children>
       <AnchorPane prefHeight="674.0" prefWidth="756.0">
           <children>
-              <Label layoutX="264.0" layoutY="23.0" prefHeight="70.0" prefWidth="241.0" text="Configuration" textFill="#95949a">
+              <Label layoutX="216.0" layoutY="14.0" prefHeight="61.0" prefWidth="324.0" text="Passive Simulation" textFill="#95949a">
                   <font>
                       <Font name="System Bold" size="36.0" />
                   </font>
               </Label>
-            <Label layoutX="294.0" layoutY="620.0" text="Loaded from configuration.csv file" />
+            <Button layoutX="360.0" layoutY="589.0" mnemonicParsing="false" text="Run" />
+            <Label layoutX="39.0" layoutY="96.0" text="Last time micro simulation was run:" />
+            <Label layoutX="236.0" layoutY="96.0" text="00:00 01/01/5555" />
           </children>
+      
       </AnchorPane>
    </children>
 </fx:root>

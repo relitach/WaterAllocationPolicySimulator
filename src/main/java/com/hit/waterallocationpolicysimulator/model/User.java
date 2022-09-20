@@ -5,19 +5,17 @@ public class User
 
     private int id;
     private double amountOfMoney;
-    private double amountOfQuantity;
+    private double alpha;
     private String demandFunction; // Bikush Function
     private String slopeOfDemandFunction; // Shipua
     private String interceptOfDemandFunction; // Hituh
 
 
-    public User(int id, double amountOfMoney, double amountOfQuantity, String demandFunction, String slopeOfDemandFunction, String interceptOfDemandFunction) {
+    public User(int id, double amountOfMoney, double alpha, String demandFunction) {
         this.id = id;
         this.amountOfMoney = amountOfMoney;
-        this.amountOfQuantity = amountOfQuantity;
-        this.demandFunction = demandFunction;
-        this.slopeOfDemandFunction = slopeOfDemandFunction;
-        this.interceptOfDemandFunction = interceptOfDemandFunction;
+        this.alpha = alpha;
+        this.demandFunction = demandFunction; // Dv
     }
 
     public int getId() {
@@ -36,12 +34,12 @@ public class User
         this.amountOfMoney = amountOfMoney;
     }
 
-    public double getAmountOfQuantity() {
-        return amountOfQuantity;
+    public double getAlpha() {
+        return alpha;
     }
 
-    public void setAmountOfQuantity(double amountOfQuantity) {
-        this.amountOfQuantity = amountOfQuantity;
+    public void setAlpha(double amountOfQuantity) {
+        this.alpha = amountOfQuantity;
     }
 
     public String getDemandFunction() {

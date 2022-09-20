@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root prefHeight="674.0" prefWidth="756.0" type="Pane" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="674.0" prefWidth="756.0">
+          <children>
+              <Label layoutX="226.0" layoutY="29.0" prefHeight="53.0" prefWidth="304.0" text="Active Simulation" textFill="#95949a">
+                  <font>
+                      <Font name="System Bold" size="36.0" />
+                  </font>
+              </Label>
+            <Label layoutX="42.0" layoutY="177.0" text="First price of unit (w):" />
+            <Button fx:id="btnRunActive" layoutX="317.0" layoutY="609.0" mnemonicParsing="false" text="Run" />
+            <Label layoutX="42.0" layoutY="134.0" text="Distribution  File:" />
+            <TextField fx:id="openCsvFileTextField" layoutX="144.0" layoutY="130.0" prefHeight="26.0" prefWidth="466.0" promptText="csv file" />
+            <Button fx:id="btnClearActive" layoutX="369.0" layoutY="609.0" mnemonicParsing="false" text="Clear" />
+            <Label layoutX="42.0" layoutY="218.0" text="First aggregate quantityt (Q):" />
+            <TableView fx:id="activeTable" layoutX="40.0" layoutY="367.0" prefHeight="211.0" prefWidth="677.0">
+              <columns>
+<!--                <TableColumn prefWidth="75.0" text="Year 1" />-->
+<!--                <TableColumn prefWidth="75.0" text="Year 2" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Year 3" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Year 4" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Year 5" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Year 7" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Year 8" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Column 9" />-->
+<!--                  <TableColumn prefWidth="75.0" text="Year 10" />-->
+              </columns>
+            </TableView>
+            <TextField fx:id="wTextField" layoutX="162.0" layoutY="173.0" />
+            <TextField fx:id="qTextField" layoutX="205.0" layoutY="215.0" />
+            <Button fx:id="btnOpenCsvFile" layoutX="620.0" layoutY="130.0" mnemonicParsing="false" text="Open" />
+          </children>
+      </AnchorPane>
+   </children>
+</fx:root>

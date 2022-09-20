@@ -33,9 +33,9 @@ public class SimulatorController {
     private StackPane exitSimStackPane;
 
     @FXML
-    private MicroSimulationController microSimulationController;
+    private ActiveSimulationController activeSimulationController;
     @FXML
-    private MacroSimulationController macroSimulationController;
+    private PassiveSimulationController passiveSimulationController;
     @FXML
     private ConfigurationController configurationController;
     @FXML
@@ -44,9 +44,9 @@ public class SimulatorController {
     private StackPane stackPaneAllScreens;
 
     @FXML
-    private Button btnMicroSimulation;
+    private Button btnActiveSimulation;
     @FXML
-    private Button btnMacroSimulation;
+    private Button btnPassiveSimulation;
     @FXML
     private Button btnConfiguration;
     @FXML
@@ -61,10 +61,10 @@ public class SimulatorController {
         loadLogo();
         loadScreensInstances();
 //        microSimulationController.setVisible(false);
-        macroSimulationController.setVisible(false);
+        passiveSimulationController.setVisible(false);
         configurationController.setVisible(false);
         aboutController.setVisible(false);
-        microSimulationController.showPane();
+        activeSimulationController.showPane();
 
         loadButtons();
         Utils.createTooltipListener(minimizeSimStackPane, Utils.MINIMIZE, SimTypes.ShowNodeFrom.RIGHT);
@@ -85,41 +85,41 @@ public class SimulatorController {
     private void loadScreensInstances()
     {
         SimCommon simCommon = SimCommon.getInstance();
-        microSimulationController = simCommon.getMicroSimulationController();
-        macroSimulationController = simCommon.getMacroSimulationController();
+        activeSimulationController = simCommon.getActiveSimulationController();
+        passiveSimulationController = simCommon.getPassiveSimulationController();
         configurationController = simCommon.getConfigurationController();
         aboutController = simCommon.getAboutController();
-        stackPaneAllScreens.getChildren().addAll(microSimulationController, macroSimulationController, configurationController, aboutController);
+        stackPaneAllScreens.getChildren().addAll(activeSimulationController, passiveSimulationController, configurationController, aboutController);
     }
 
     private void loadButtons()
     {
-        btnMicroSimulation.setOnAction(this::handleClicks);
-        btnMacroSimulation.setOnAction(this::handleClicks);
+        btnActiveSimulation.setOnAction(this::handleClicks);
+        btnPassiveSimulation.setOnAction(this::handleClicks);
         btnConfiguration.setOnAction(this::handleClicks);
         btnAbout.setOnAction(this::handleClicks);
     }
 
     public void handleClicks(ActionEvent actionEvent) {
 
-        if (actionEvent.getSource() == btnMicroSimulation) {
-            microSimulationController.showPane();
-            macroSimulationController.setVisible(false);
+        if (actionEvent.getSource() == btnActiveSimulation) {
+            activeSimulationController.showPane();
+            passiveSimulationController.setVisible(false);
             configurationController.setVisible(false);
             aboutController.setVisible(false);
-        } else if (actionEvent.getSource() == btnMacroSimulation) {
-            microSimulationController.setVisible(false);
-            macroSimulationController.showPane();
+        } else if (actionEvent.getSource() == btnPassiveSimulation) {
+            activeSimulationController.setVisible(false);
+            passiveSimulationController.showPane();
             configurationController.setVisible(false);
             aboutController.setVisible(false);
         } else if (actionEvent.getSource() == btnConfiguration) {
-            microSimulationController.setVisible(false);
-            macroSimulationController.setVisible(false);
+            activeSimulationController.setVisible(false);
+            passiveSimulationController.setVisible(false);
             configurationController.showPane();
             aboutController.setVisible(false);
         } else if (actionEvent.getSource() == btnAbout) {
-            microSimulationController.setVisible(false);
-            macroSimulationController.setVisible(false);
+            activeSimulationController.setVisible(false);
+            passiveSimulationController.setVisible(false);
             configurationController.setVisible(false);
             aboutController.showPane();
         }

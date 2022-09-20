@@ -6,4 +6,6 @@ public class Policy
     private double waterPrice;
     private double dealCost;
 
+
+
 }

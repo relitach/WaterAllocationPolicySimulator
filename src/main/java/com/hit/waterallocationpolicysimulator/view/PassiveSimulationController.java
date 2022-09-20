@@ -6,13 +6,13 @@ import javafx.scene.layout.Pane;
 import animatefx.animation.FadeIn;
 import java.io.IOException;
 
-public class MacroSimulationController extends Pane
+public class PassiveSimulationController extends Pane
 {
-    private static MacroSimulationController instance = null;
+    private static PassiveSimulationController instance = null;
 
-    public static MacroSimulationController getInstance() {
+    public static PassiveSimulationController getInstance() {
         if (instance == null) {
-            instance = new MacroSimulationController();
+            instance = new PassiveSimulationController();
         }
         return instance;
     }
@@ -22,13 +22,13 @@ public class MacroSimulationController extends Pane
 
     }
 
-    private MacroSimulationController()
+    private PassiveSimulationController()
     {
         loadView();
     }
 
     private Pane loadView() {
-        FXMLLoader loader = new FXMLLoader(SimulatorMain.class.getResource("fxml/macro-simulation.fxml"));
+        FXMLLoader loader = new FXMLLoader(SimulatorMain.class.getResource("fxml/passive-simulation.fxml"));
         loader.setController(this);
         loader.setRoot(this);
 

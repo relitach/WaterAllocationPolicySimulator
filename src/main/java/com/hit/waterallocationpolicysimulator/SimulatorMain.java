@@ -41,6 +41,7 @@ public class SimulatorMain extends Application
     }
 
 
+
     private void makeStageDraggable() {
         this.rootPane.addEventHandler(MouseEvent.MOUSE_PRESSED , event -> {
             x = event.getSceneX();
