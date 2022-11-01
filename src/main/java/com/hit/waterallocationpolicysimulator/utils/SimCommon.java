@@ -7,7 +7,9 @@ import com.hit.waterallocationpolicysimulator.view.ConfigurationController;
 import com.hit.waterallocationpolicysimulator.view.PassiveSimulationController;
 import com.hit.waterallocationpolicysimulator.view.ActiveSimulationController;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -40,35 +42,51 @@ public class SimCommon
 
         if(policyType == SimTypes.PolicyType.QUANTITY)  // Active market
         {
-            int numberOfPairs = 3; // Number of pair of people. need to get from gui
+
+            int numberOfPairs = 3; // Number of a pair of people. need to get from gui
+            System.out.println("Try to find " + numberOfPairs + " pairs of buyer and seller");
 
             Random rand = new Random();
             User buyer;
             User seller;
+            int amountOfDeals = 0;
 
             for(int i =0; i < numberOfPairs ; i++)
             {
+                System.out.println("#### Pair number: " + i + " ####");
+
                 int buyerId = rand.nextInt(usersList.size());
                 int sellerId;
                 buyer = usersList.get(buyerId);
                 do { sellerId = rand.nextInt(usersList.size()); } while(buyerId == sellerId);
                 seller = usersList.get(sellerId);
 
-                double qBuyer = buyer.getAlpha() * Q; // q - Actual quantity used by buyer
-                double qSeller = seller.getAlpha() * Q; // q - Actual quantity used by seller
+
+                System.out.println("Current quantity of buyer(" + buyer.getId() +"): " + buyer.getqCurrent());
+                System.out.println("Current quantity of seller(" + seller.getId() +"): " + seller.getqCurrent());
+
 
                 double dealQuantity = 0;
-
                 double uBuyer;
                 double uSeller;
-                double uBuyerDeal = 0;
-                double uSellerDeal = 0;
+                double uBuyerDeal = buyer.getu();
+                double uSellerDeal = seller.getu();
 
-                for(int x = 0; x <= qSeller; x++)
+                System.out.println("Current u of buyer(" + buyer.getId() +"): " + uBuyerDeal);
+                System.out.println("Current u of seller(" + seller.getId() +"): " + uSellerDeal);
+
+                // Check if the buyer need to buy and if the seller have to sell more than he need
+                if(buyer.getq() < buyer.getqCurrent() || seller.getq() < seller.getqCurrent())
+                {
+                    System.out.println("No Deal");
+                    continue;
+                }
+
+                for(int x = 0; x <= seller.getqCurrent(); x++)
                 {
                     // u = f(q)-w*q
-                    uBuyer = ParseFunction(buyer.getDemandFunction(),qBuyer + x) -  w * (qBuyer + x);
-                    uSeller = ParseFunction(seller.getDemandFunction(),qSeller - x) -  w * (qSeller - x);
+                    uBuyer = buyer.demandFunction(buyer.getqCurrent() + x) -  w * (buyer.getqCurrent() + x);
+                    uSeller = seller.demandFunction(seller.getqCurrent() - x) -  w * (seller.getqCurrent() - x);
                     if(uBuyer > uBuyerDeal && uSeller > uSellerDeal)
                     {
                         uBuyerDeal = uBuyer;
@@ -79,12 +97,30 @@ public class SimCommon
                 if(dealQuantity > 0)
                 {
                     System.out.println("Deal");
+                    buyer.setqCurrent(buyer.getqCurrent() + dealQuantity);
+                    seller.setqCurrent(seller.getqCurrent() - dealQuantity);
+
+                    System.out.println("New quantity of buyer(" + buyer.getId() +"): " + buyer.getqCurrent());
+                    System.out.println("New quantity of seller(" + seller.getId() +"): " + seller.getqCurrent());
+                    amountOfDeals++;
+
                 }
                 else
                 {
                     System.out.println("No Deal");
                 }
             }
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date();
+
+            // Calculate new Q
+            double NewQ = 0;
+            for (User user: usersList)
+            {
+                NewQ = NewQ + user.getq();
+            }
+
+            result = new SimulationResult(formatter.format(date), Q+"", NewQ+"", amountOfDeals+"", "");
         }
         else if (policyType == SimTypes.PolicyType.PRICE) // Passive market
         {

@@ -24,8 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.text.DecimalFormat;
+import java.util.*;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -52,6 +52,9 @@ public class ActiveSimulationController extends Pane
     private TextField qTextField;
 
     @FXML
+    private TextField nTextField;
+
+    @FXML
     private TableView activeTable;
 
 
@@ -60,7 +63,12 @@ public class ActiveSimulationController extends Pane
     private static ActiveSimulationController instance = null;
     static HostServices Host;
     private Stage myStage;
-    private List<User> userList = null;
+    private ArrayList<User> userList = new ArrayList<User>();;
+    private boolean isFirstRun = true;
+
+    double w; // Price
+    double Q; // Aggregate quantity
+    double N; // Number of users
 
     public static ActiveSimulationController getInstance() {
         if (instance == null) {
@@ -109,44 +117,100 @@ public class ActiveSimulationController extends Pane
     {
         btnOpenCsvFile.setOnAction(this::openFileLocation);
         btnRunActive.setOnAction(this::runSimulate);
-        btnClearActive.setOnAction(this::openFileLocation);
+        btnClearActive.setOnAction(this::clear);
     }
 
     private void initTable()
     {
-        //TableView tab = new TableView();
-
         TableColumn yearColumn = new TableColumn("Year");
         yearColumn.setCellValueFactory(new PropertyValueFactory<>("Year"));
+        yearColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.2));
 
         TableColumn qColumn = new TableColumn("Q");
         qColumn.setCellValueFactory(new PropertyValueFactory<>("Q"));
 
-        activeTable.getColumns().addAll(yearColumn, qColumn);
+        TableColumn newQColumn = new TableColumn("New Q");
+        newQColumn.setCellValueFactory(new PropertyValueFactory<>("NewQ"));
+
+        TableColumn amountOfDealsColumn = new TableColumn("Amount Of Deals");
+        amountOfDealsColumn.setCellValueFactory(new PropertyValueFactory<>("amountOfDeals"));
+        amountOfDealsColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.2));
+
+        TableColumn AverageCostColumn = new TableColumn("Average Cost");
+        AverageCostColumn.setCellValueFactory(new PropertyValueFactory<>("AverageCost"));
+        AverageCostColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.2));
 
 
-        SimulationResult result = new SimulationResult("2022", "500");
-        activeTable.getItems().add(result);
+        activeTable.getColumns().addAll(yearColumn, qColumn, newQColumn,amountOfDealsColumn, AverageCostColumn);
+
+
+
 
     }
 
 
     private void runSimulate(ActionEvent actionEvent) {
 
-        if(userList != null)
+        // Validate textfield
+//        if()
+//        {
+//
+//        }
+//        else
+//        {
+//
+//        }
+
+        if(isFirstRun)
         {
+            isFirstRun = false;
+            DecimalFormat df = new DecimalFormat("####0.000");
+
+            wTextField.setEditable(false);
+            wTextField.setDisable(true);
+
+            qTextField.setEditable(false);
+            qTextField.setDisable(true);
+
+            nTextField.setEditable(false);
+            nTextField.setDisable(true);
+
+
             String wString = wTextField.getText();
             String QString = qTextField.getText();
+            String NString = nTextField.getText();
 
-            double w = Double.parseDouble(wString);
-            double Q = Double.parseDouble(QString);
+            w = Double.parseDouble(wString);
+            Q = Double.parseDouble(QString);
+            N = Double.parseDouble(NString);
+
+
+            System.out.println("User list creation started");
+            for (int i=0 ; i<N ; i++)
+            {
+                Random r = new Random();
+                double a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
+                r = new Random();
+                double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
+
+                User tempUser = new User(i, 0.1, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
+                System.out.println("Generated new user: " + tempUser.toString());
+                userList.add(tempUser);
+            }
+            System.out.println("User list creation finished");
+
+        }
+        if(userList != null)
+        {
+
 
             System.out.println("w = " + w + ", Q = " + Q);
             SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.QUANTITY, userList, w, Q);
 
             if(result != null)
             {
-
+                activeTable.getItems().add(result);
+                Q = Double.valueOf(result.getNewQ());
             }
         }
         else
@@ -186,6 +250,28 @@ public class ActiveSimulationController extends Pane
             userList = Utils.parseCSVFileToUserList(file);
         }
     }
+
+    public void clear(ActionEvent actionEvent)
+    {
+        wTextField.clear();
+        wTextField.setEditable(true);
+        wTextField.setDisable(false);
+
+
+        qTextField.clear();
+        qTextField.setEditable(true);
+        qTextField.setDisable(false);
+
+        nTextField.clear();
+        nTextField.setEditable(true);
+        nTextField.setDisable(false);
+
+
+        activeTable.getItems().clear();
+
+        isFirstRun = true;
+    }
+
 
 
 

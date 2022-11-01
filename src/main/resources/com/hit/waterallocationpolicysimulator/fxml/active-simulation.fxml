@@ -18,7 +18,7 @@
             <Label layoutX="42.0" layoutY="134.0" text="Distribution  File:" />
             <TextField fx:id="openCsvFileTextField" layoutX="144.0" layoutY="130.0" prefHeight="26.0" prefWidth="466.0" promptText="csv file" />
             <Button fx:id="btnClearActive" layoutX="369.0" layoutY="609.0" mnemonicParsing="false" text="Clear" />
-            <Label layoutX="42.0" layoutY="218.0" text="First aggregate quantityt (Q):" />
+            <Label layoutX="42.0" layoutY="218.0" text="First aggregate quantity (Q):" />
             <TableView fx:id="activeTable" layoutX="40.0" layoutY="367.0" prefHeight="211.0" prefWidth="677.0">
               <columns>
 <!--                <TableColumn prefWidth="75.0" text="Year 1" />-->
@@ -35,6 +35,8 @@
             <TextField fx:id="wTextField" layoutX="162.0" layoutY="173.0" />
             <TextField fx:id="qTextField" layoutX="205.0" layoutY="215.0" />
             <Button fx:id="btnOpenCsvFile" layoutX="620.0" layoutY="130.0" mnemonicParsing="false" text="Open" />
+            <Label layoutX="42.0" layoutY="260.0" text="Number of users (N):" />
+            <TextField fx:id="nTextField" layoutX="168.0" layoutY="256.0" />
           </children>
       </AnchorPane>
    </children>

@@ -57,9 +57,9 @@ public class Utils
     }
 
 
-    public static List<User> parseCSVFileToUserList(File file)
+    public static ArrayList<User> parseCSVFileToUserList(File file)
     {
-        List<User> usersList = new ArrayList<User>();
+        ArrayList<User> usersList = new ArrayList<User>();
 
         try (CSVReader reader = new CSVReader(new FileReader(file)))
         {
