@@ -2,16 +2,14 @@ package com.hit.waterallocationpolicysimulator.utils;
 
 import com.hit.waterallocationpolicysimulator.model.User;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,6 +87,58 @@ public class Utils
         }
 
         return usersList;
+    }
+
+    public static void writeUserListToCSVFile(ArrayList<User> userList, String filePath)
+    {
+        // first create file object for file placed at location
+        // specified by filepath
+        File file = new File(filePath);
+
+        try {
+            file.createNewFile();
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(file);
+
+            // create CSVWriter object filewriter object as parameter
+            CSVWriter writer = new CSVWriter(outputfile);
+
+            // adding header to csv
+            String[] header = { "id",
+                    "alpha",
+                    "a",
+                    "b",
+                    "v",
+                    "w",
+                    "q",
+                    "qCurrent",
+                    "u",
+                    "IsParticipatingNextSimulation" };
+            writer.writeNext(header);
+
+            // add data to csv
+            for (int i = 0; i <userList.size(); i++ )
+            {
+                String[] dataRow = {String.valueOf(userList.get(i).getId()),
+                        String.valueOf(userList.get(i).getAlpha()),
+                        String.valueOf(userList.get(i).getA()),
+                        String.valueOf(userList.get(i).getB()),
+                        String.valueOf(userList.get(i).getV()),
+                        String.valueOf(userList.get(i).getW()),
+                        String.valueOf(userList.get(i).getq()),
+                        String.valueOf(userList.get(i).getqCurrent()),
+                        String.valueOf(userList.get(i).getu()),
+                        String.valueOf(userList.get(i).getIsParticipatingNextSimulation())};
+                writer.writeNext(dataRow);
+            }
+
+
+            // closing writer connection
+            writer.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

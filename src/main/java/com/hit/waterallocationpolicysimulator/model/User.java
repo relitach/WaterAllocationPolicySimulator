@@ -14,20 +14,23 @@ public class User
     private double q; // the quantity of water the user NEEDS !
     private double qCurrent; // the current quantity of water the user HAVE !
     private double u; // u = f(qCurrent) - w * qCurrent
+    private boolean isParticipatingNextSimulation; // u = f(qCurrent) - w * qCurrent
 
     private DecimalFormat df = new DecimalFormat("####0.000");
 
 
 
-    public User(int id, double alpha, double a, double b, double w, double Q) {
+    public User(int id, double alpha, double a, double b, double w, double Q, boolean isParticipatingNextSimulation) {
         this.id = id;
         this.alpha = alpha;
         this.a = a;
         this.b = b;
         this.w = w;
         this.qCurrent = alpha * Q;
-        producedValue();
+        this.isParticipatingNextSimulation = isParticipatingNextSimulation;
         inverseDemandFunction();
+        producedValue();
+
 
         this.u = demandFunction(qCurrent) - w * qCurrent;
 
@@ -54,8 +57,33 @@ public class User
         this.qCurrent = qCurrent;
     }
 
+
+    public void setIsParticipatingNextSimulation(boolean isParticipatingNextSimulation) {
+        this.isParticipatingNextSimulation = isParticipatingNextSimulation;
+    }
+
+    public boolean getIsParticipatingNextSimulation() {
+        return isParticipatingNextSimulation;
+    }
+
     public double getu() {
         return u;
+    }
+
+    public double getA() {
+        return a;
+    }
+
+    public double getB() {
+        return b;
+    }
+
+    public double getV() {
+        return v;
+    }
+
+    public double getW() {
+        return w;
     }
 
 
@@ -67,7 +95,14 @@ public class User
      */
     public void producedValue()
     {
-        this.v = Double.valueOf(df.format(a * Math.pow(q, b)));
+        if(q == 0)
+        {
+            this.v = 0;
+        }
+        else
+        {
+            this.v = Double.valueOf(df.format(a * Math.pow(q, b)));
+        }
     }
 
 
@@ -79,8 +114,13 @@ public class User
      */
     public double demandFunction(double quantity)
     {
-        double Dv =  Double.valueOf(df.format(a * b * Math.pow(quantity, b-1)));
-        return Dv;
+        if(quantity == 0)
+        {
+            return 0;
+        }
+
+        double Dv =  a * b * Math.pow(quantity, b-1);
+        return Double.valueOf(df.format(Dv));
     }
 
     /**
@@ -103,6 +143,7 @@ public class User
                 ", w=" + w +
                 ", q=" + q +
                 ", qCurrent=" + qCurrent +
+                ", isParticipatingNextSimulation=" + isParticipatingNextSimulation +
                 '}';
     }
 }

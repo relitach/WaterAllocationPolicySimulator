@@ -55,6 +55,12 @@ public class ActiveSimulationController extends Pane
     private TextField nTextField;
 
     @FXML
+    private TextField numOfPairsTextField;
+
+    @FXML
+    private TextField rangeTextField;
+
+    @FXML
     private TableView activeTable;
 
 
@@ -69,6 +75,7 @@ public class ActiveSimulationController extends Pane
     double w; // Price
     double Q; // Aggregate quantity
     double N; // Number of users
+    int numOfPairs; // Number of pairs to try make a deal
 
     public static ActiveSimulationController getInstance() {
         if (instance == null) {
@@ -82,6 +89,7 @@ public class ActiveSimulationController extends Pane
         loadView();
         loadButtons();
         initTable();
+        initDefaultParams();
         String defaultCsv = "D:\\Ariel\\Projects\\WaterAllocationPolicySimulator\\src\\main\\resources\\com\\hit\\waterallocationpolicysimulator\\csv.files\\distribution_of_property_rights.csv";
         openCsvFileTextField.setText(defaultCsv);
     }
@@ -132,21 +140,39 @@ public class ActiveSimulationController extends Pane
         TableColumn newQColumn = new TableColumn("New Q");
         newQColumn.setCellValueFactory(new PropertyValueFactory<>("NewQ"));
 
+        TableColumn wColumn = new TableColumn("w");
+        wColumn.setCellValueFactory(new PropertyValueFactory<>("w"));
+
+        TableColumn newWColumn = new TableColumn("New w");
+        newWColumn.setCellValueFactory(new PropertyValueFactory<>("NewW"));
+
         TableColumn amountOfDealsColumn = new TableColumn("Amount Of Deals");
         amountOfDealsColumn.setCellValueFactory(new PropertyValueFactory<>("amountOfDeals"));
-        amountOfDealsColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.2));
+        amountOfDealsColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.15));
 
         TableColumn AverageCostColumn = new TableColumn("Average Cost");
         AverageCostColumn.setCellValueFactory(new PropertyValueFactory<>("AverageCost"));
-        AverageCostColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.2));
+        AverageCostColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.15));
 
 
-        activeTable.getColumns().addAll(yearColumn, qColumn, newQColumn,amountOfDealsColumn, AverageCostColumn);
-
-
-
+        activeTable.getColumns().addAll(yearColumn, qColumn, newQColumn, wColumn, newWColumn, amountOfDealsColumn, AverageCostColumn);
 
     }
+
+    private void initDefaultParams()
+    {
+
+        wTextField.setText("50");
+
+        qTextField.setText("300");
+
+        nTextField.setText("250");
+
+        numOfPairsTextField.setText("40");
+
+        rangeTextField.setText("10");
+    }
+
 
 
     private void runSimulate(ActionEvent actionEvent) {
@@ -175,14 +201,24 @@ public class ActiveSimulationController extends Pane
             nTextField.setEditable(false);
             nTextField.setDisable(true);
 
+            numOfPairsTextField.setEditable(false);
+            numOfPairsTextField.setDisable(true);
+
+            rangeTextField.setEditable(false);
+            rangeTextField.setDisable(true);
+
+
+
 
             String wString = wTextField.getText();
             String QString = qTextField.getText();
             String NString = nTextField.getText();
+            String NumberOfPairs = numOfPairsTextField.getText();
 
             w = Double.parseDouble(wString);
             Q = Double.parseDouble(QString);
             N = Double.parseDouble(NString);
+            numOfPairs = Integer.parseInt(NumberOfPairs);
 
 
             System.out.println("User list creation started");
@@ -193,7 +229,7 @@ public class ActiveSimulationController extends Pane
                 r = new Random();
                 double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
 
-                User tempUser = new User(i, 0.1, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
+                User tempUser = new User(i, Q/N/100, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q, true);
                 System.out.println("Generated new user: " + tempUser.toString());
                 userList.add(tempUser);
             }
@@ -202,15 +238,20 @@ public class ActiveSimulationController extends Pane
         }
         if(userList != null)
         {
-
-
             System.out.println("w = " + w + ", Q = " + Q);
-            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.QUANTITY, userList, w, Q);
+
+            System.out.println("#### Run Active Simulation ####");
+            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.QUANTITY, userList, w, Q, numOfPairs);
 
             if(result != null)
             {
                 activeTable.getItems().add(result);
                 Q = Double.valueOf(result.getNewQ());
+                w = Double.valueOf(result.getNewW());
+                Utils.writeUserListToCSVFile(userList, "D:\\Ariel\\Temp\\" + result.getYear()
+                        .replace('/','_')
+                        .replace(' ','_')
+                        .replace(':','_')+ ".csv");
             }
         }
         else
@@ -257,7 +298,6 @@ public class ActiveSimulationController extends Pane
         wTextField.setEditable(true);
         wTextField.setDisable(false);
 
-
         qTextField.clear();
         qTextField.setEditable(true);
         qTextField.setDisable(false);
@@ -265,6 +305,14 @@ public class ActiveSimulationController extends Pane
         nTextField.clear();
         nTextField.setEditable(true);
         nTextField.setDisable(false);
+
+        numOfPairsTextField.clear();
+        numOfPairsTextField.setEditable(true);
+        numOfPairsTextField.setDisable(false);
+
+        rangeTextField.clear();
+        rangeTextField.setEditable(true);
+        rangeTextField.setDisable(false);
 
 
         activeTable.getItems().clear();

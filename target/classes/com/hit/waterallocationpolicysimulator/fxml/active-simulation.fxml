@@ -13,12 +13,12 @@
                       <Font name="System Bold" size="36.0" />
                   </font>
               </Label>
-            <Label layoutX="42.0" layoutY="177.0" text="First price of unit (w):" />
+            <Label layoutX="42.0" layoutY="146.0" text="First price of unit (w):" />
             <Button fx:id="btnRunActive" layoutX="317.0" layoutY="609.0" mnemonicParsing="false" text="Run" />
-            <Label layoutX="42.0" layoutY="134.0" text="Distribution  File:" />
-            <TextField fx:id="openCsvFileTextField" layoutX="144.0" layoutY="130.0" prefHeight="26.0" prefWidth="466.0" promptText="csv file" />
+            <Label layoutX="42.0" layoutY="103.0" text="Distribution  File:" />
+            <TextField fx:id="openCsvFileTextField" layoutX="144.0" layoutY="99.0" prefHeight="26.0" prefWidth="466.0" promptText="csv file" />
             <Button fx:id="btnClearActive" layoutX="369.0" layoutY="609.0" mnemonicParsing="false" text="Clear" />
-            <Label layoutX="42.0" layoutY="218.0" text="First aggregate quantity (Q):" />
+            <Label layoutX="42.0" layoutY="187.0" text="First aggregate quantity (Q):" />
             <TableView fx:id="activeTable" layoutX="40.0" layoutY="367.0" prefHeight="211.0" prefWidth="677.0">
               <columns>
 <!--                <TableColumn prefWidth="75.0" text="Year 1" />-->
@@ -32,11 +32,15 @@
 <!--                  <TableColumn prefWidth="75.0" text="Year 10" />-->
               </columns>
             </TableView>
-            <TextField fx:id="wTextField" layoutX="162.0" layoutY="173.0" />
-            <TextField fx:id="qTextField" layoutX="205.0" layoutY="215.0" />
-            <Button fx:id="btnOpenCsvFile" layoutX="620.0" layoutY="130.0" mnemonicParsing="false" text="Open" />
-            <Label layoutX="42.0" layoutY="260.0" text="Number of users (N):" />
-            <TextField fx:id="nTextField" layoutX="168.0" layoutY="256.0" />
+            <TextField fx:id="wTextField" layoutX="162.0" layoutY="142.0" />
+            <TextField fx:id="qTextField" layoutX="205.0" layoutY="184.0" />
+            <Button fx:id="btnOpenCsvFile" layoutX="620.0" layoutY="99.0" mnemonicParsing="false" text="Open" />
+            <Label layoutX="42.0" layoutY="229.0" text="Number of users (N):" />
+            <TextField fx:id="nTextField" layoutX="168.0" layoutY="225.0" />
+            <Label layoutX="42.0" layoutY="267.0" text="Number of pairs:" />
+            <TextField fx:id="numOfPairsTextField" layoutX="168.0" layoutY="263.0" />
+            <TextField fx:id="rangeTextField" layoutX="168.0" layoutY="301.0" />
+            <Label layoutX="42.0" layoutY="305.0" text="Range:" />
           </children>
       </AnchorPane>
    </children>
