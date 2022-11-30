@@ -87,8 +87,8 @@ public class SimCommon
                 for(int x = 0; x <= seller.getqCurrent(); x++)
                 {
                     // u = f(q)-w*q = efficiency = money
-                    uBuyer = buyer.demandFunction(buyer.getqCurrent() + x) -  w * (buyer.getqCurrent() + x);
-                    uSeller = seller.demandFunction(seller.getqCurrent() - x) -  w * (seller.getqCurrent() - x);
+                    uBuyer = buyer.utilityFunction(buyer.getqCurrent() + x) -  w * (buyer.getqCurrent() + x);
+                    uSeller = seller.utilityFunction(seller.getqCurrent() - x) -  w * (seller.getqCurrent() - x);
                     if(uBuyer > uBuyerDeal && uSeller > uSellerDeal)
                     {
                         uBuyerDeal = uBuyer;
@@ -133,7 +133,7 @@ public class SimCommon
             }
 
             // Calculate new w by C(Q)
-            double NewW = cQ / Q;
+            double NewW = cQ / NewQ;
 
 
             result = new SimulationResult(formatter.format(date), Q+"", NewQ+"", w+"", NewW+"", amountOfDeals+"", "");

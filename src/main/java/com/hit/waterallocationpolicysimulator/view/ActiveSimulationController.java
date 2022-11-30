@@ -236,6 +236,19 @@ public class ActiveSimulationController extends Pane
             System.out.println("User list creation finished");
 
         }
+        else
+        {
+            // Update params of user
+            for (int i=0 ; i<N ; i++)
+            {
+
+                userList.get(i).setAlpha(Q/N/100);
+                userList.get(i).setW(w);
+                userList.get(i).inverseDemandFunction();
+                userList.get(i).producedValue();
+
+            }
+        }
         if(userList != null)
         {
             System.out.println("w = " + w + ", Q = " + Q);

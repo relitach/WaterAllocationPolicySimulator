@@ -31,8 +31,8 @@ public class User
         inverseDemandFunction();
         producedValue();
 
-
-        this.u = demandFunction(qCurrent) - w * qCurrent;
+        utilityFunction(qCurrent);
+//        this.u = demandFunction(qCurrent) - w * qCurrent;
 
     }
 
@@ -86,6 +86,14 @@ public class User
         return w;
     }
 
+    public void setAlpha(double alpha) {
+        this.alpha = alpha;
+    }
+
+    public void setW(double w) {
+        this.w = w;
+    }
+
 
 
     /**
@@ -121,6 +129,17 @@ public class User
 
         double Dv =  a * b * Math.pow(quantity, b-1);
         return Double.valueOf(df.format(Dv));
+    }
+
+    public double utilityFunction(double quantity)
+    {
+        if(quantity == 0)
+        {
+            return 0;
+        }
+
+        this.u =  a * Math.pow(quantity, b);
+        return Double.valueOf(df.format(u));
     }
 
     /**
