@@ -47,8 +47,7 @@
                   <Button fx:id="btnPassiveSimulation" layoutX="43.0" layoutY="80.0" mnemonicParsing="false" prefWidth="150.0" text="Passive Simulation" />
                   <Button fx:id="btnConfiguration" layoutX="43.0" layoutY="120.0" mnemonicParsing="false" prefWidth="150.0" text="Configuration" />
                   <Button fx:id="btnAbout" layoutX="43.0" layoutY="160.0" mnemonicParsing="false" prefWidth="150.0" text="About" />
-                
-                                                    <Label fx:id="welcomeText" layoutX="80.0" layoutY="267.0" prefHeight="17.0" prefWidth="67.0" />
+                  <Label fx:id="welcomeText" layoutX="80.0" layoutY="267.0" prefHeight="17.0" prefWidth="67.0" />
                </children>
             </AnchorPane>
           <AnchorPane>

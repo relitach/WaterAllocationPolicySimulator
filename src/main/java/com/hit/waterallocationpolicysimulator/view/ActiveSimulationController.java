@@ -17,6 +17,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -34,7 +35,7 @@ import com.opencsv.exceptions.CsvException;
 public class ActiveSimulationController extends Pane
 {
     @FXML
-    private Button btnOpenCsvFile;
+    private Button btnSelectFolderActive;
 
     @FXML
     private Button btnRunActive;
@@ -43,22 +44,19 @@ public class ActiveSimulationController extends Pane
     private Button btnClearActive;
 
     @FXML
-    private TextField openCsvFileTextField;
+    private TextField outputFolderPathTextFieldActive;
 
     @FXML
-    private TextField wTextField;
+    private TextField wTextFieldActive;
 
     @FXML
-    private TextField qTextField;
+    private TextField qTextFieldActive;
 
     @FXML
-    private TextField nTextField;
+    private TextField nTextFieldActive;
 
     @FXML
-    private TextField numOfPairsTextField;
-
-    @FXML
-    private TextField rangeTextField;
+    private TextField numOfPairsTextFieldActive;
 
     @FXML
     private TableView activeTable;
@@ -67,7 +65,6 @@ public class ActiveSimulationController extends Pane
 
 
     private static ActiveSimulationController instance = null;
-    static HostServices Host;
     private Stage myStage;
     private ArrayList<User> userList = new ArrayList<User>();;
     private boolean isFirstRun = true;
@@ -90,8 +87,8 @@ public class ActiveSimulationController extends Pane
         loadButtons();
         initTable();
         initDefaultParams();
-        String defaultCsv = "D:\\Ariel\\Projects\\WaterAllocationPolicySimulator\\src\\main\\resources\\com\\hit\\waterallocationpolicysimulator\\csv.files\\distribution_of_property_rights.csv";
-        openCsvFileTextField.setText(defaultCsv);
+        String defaultOutputFolder = "C:\\Temp\\";
+        outputFolderPathTextFieldActive.setText(defaultOutputFolder);
     }
 
     public void setStage(Stage stage) {
@@ -123,7 +120,7 @@ public class ActiveSimulationController extends Pane
 
     private void loadButtons()
     {
-        btnOpenCsvFile.setOnAction(this::openFileLocation);
+        btnSelectFolderActive.setOnAction(this::openFileLocation);
         btnRunActive.setOnAction(this::runSimulate);
         btnClearActive.setOnAction(this::clear);
     }
@@ -162,15 +159,14 @@ public class ActiveSimulationController extends Pane
     private void initDefaultParams()
     {
 
-        wTextField.setText("50");
+        wTextFieldActive.setText("50");
 
-        qTextField.setText("300");
+        qTextFieldActive.setText("300");
 
-        nTextField.setText("250");
+        nTextFieldActive.setText("250");
 
-        numOfPairsTextField.setText("40");
+        numOfPairsTextFieldActive.setText("40");
 
-        rangeTextField.setText("10");
     }
 
 
@@ -192,28 +188,23 @@ public class ActiveSimulationController extends Pane
             isFirstRun = false;
             DecimalFormat df = new DecimalFormat("####0.000");
 
-            wTextField.setEditable(false);
-            wTextField.setDisable(true);
+            wTextFieldActive.setEditable(false);
+            wTextFieldActive.setDisable(true);
 
-            qTextField.setEditable(false);
-            qTextField.setDisable(true);
+            qTextFieldActive.setEditable(false);
+            qTextFieldActive.setDisable(true);
 
-            nTextField.setEditable(false);
-            nTextField.setDisable(true);
+            nTextFieldActive.setEditable(false);
+            nTextFieldActive.setDisable(true);
 
-            numOfPairsTextField.setEditable(false);
-            numOfPairsTextField.setDisable(true);
-
-            rangeTextField.setEditable(false);
-            rangeTextField.setDisable(true);
+            numOfPairsTextFieldActive.setEditable(false);
+            numOfPairsTextFieldActive.setDisable(true);
 
 
-
-
-            String wString = wTextField.getText();
-            String QString = qTextField.getText();
-            String NString = nTextField.getText();
-            String NumberOfPairs = numOfPairsTextField.getText();
+            String wString = wTextFieldActive.getText();
+            String QString = qTextFieldActive.getText();
+            String NString = nTextFieldActive.getText();
+            String NumberOfPairs = numOfPairsTextFieldActive.getText();
 
             w = Double.parseDouble(wString);
             Q = Double.parseDouble(QString);
@@ -261,7 +252,7 @@ public class ActiveSimulationController extends Pane
                 activeTable.getItems().add(result);
                 Q = Double.valueOf(result.getNewQ());
                 w = Double.valueOf(result.getNewW());
-                Utils.writeUserListToCSVFile(userList, "D:\\Ariel\\Temp\\" + result.getYear()
+                Utils.writeUserListToCSVFile(userList, outputFolderPathTextFieldActive.getText() + "\\Active_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
@@ -276,7 +267,8 @@ public class ActiveSimulationController extends Pane
 
     private void openFileLocation(ActionEvent actionEvent) {
         System.out.println("Open file location");
-        getTheUserFilePath();
+//        getTheUserFilePath();
+        getTheDirectoryPath();
     }
 
 
@@ -300,32 +292,43 @@ public class ActiveSimulationController extends Pane
         if (file != null)
         {
             System.out.println("Parsing file to User List");
-            openCsvFileTextField.setText(file.getPath());
+            outputFolderPathTextFieldActive.setText(file.getPath());
             userList = Utils.parseCSVFileToUserList(file);
+        }
+    }
+
+    public void getTheDirectoryPath() {
+
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+
+        File selectedDirectory = directoryChooser.showDialog(myStage);
+        System.out.println("Directory: " + selectedDirectory.toString());
+
+
+        if (selectedDirectory != null)
+        {
+            outputFolderPathTextFieldActive.setText(selectedDirectory.getAbsolutePath());
         }
     }
 
     public void clear(ActionEvent actionEvent)
     {
-        wTextField.clear();
-        wTextField.setEditable(true);
-        wTextField.setDisable(false);
+        wTextFieldActive.clear();
+        wTextFieldActive.setEditable(true);
+        wTextFieldActive.setDisable(false);
 
-        qTextField.clear();
-        qTextField.setEditable(true);
-        qTextField.setDisable(false);
+        qTextFieldActive.clear();
+        qTextFieldActive.setEditable(true);
+        qTextFieldActive.setDisable(false);
 
-        nTextField.clear();
-        nTextField.setEditable(true);
-        nTextField.setDisable(false);
+        nTextFieldActive.clear();
+        nTextFieldActive.setEditable(true);
+        nTextFieldActive.setDisable(false);
 
-        numOfPairsTextField.clear();
-        numOfPairsTextField.setEditable(true);
-        numOfPairsTextField.setDisable(false);
+        numOfPairsTextFieldActive.clear();
+        numOfPairsTextFieldActive.setEditable(true);
+        numOfPairsTextFieldActive.setDisable(false);
 
-        rangeTextField.clear();
-        rangeTextField.setEditable(true);
-        rangeTextField.setDisable(false);
 
 
         activeTable.getItems().clear();

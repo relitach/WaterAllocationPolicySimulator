@@ -38,6 +38,8 @@ public class SimCommon
     public SimulationResult runSimulation(SimTypes.PolicyType policyType, List<User> usersList, double w, double Q, int numOfPairs)
     {
         SimulationResult result = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
 
 
         if(policyType == SimTypes.PolicyType.QUANTITY)  // Active market
@@ -114,8 +116,6 @@ public class SimCommon
                     seller.setIsParticipatingNextSimulation(false);
                 }
             }
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            Date date = new Date();
 
             // Calculate new Q
             double NewQ = 0;
@@ -140,23 +140,54 @@ public class SimCommon
         }
         else if (policyType == SimTypes.PolicyType.PRICE) // Passive market
         {
-
+            double AC = w;
+            double MC = w*2;
             for(int i =0; i < usersList.size() ; i++)
             {
+                int userId = usersList.get(i).getId();
+                double qCurrent = usersList.get(i).getqCurrent();
+                double qUserNeed = usersList.get(i).getq();
 
-                double qOfUser = usersList.get(i).getAlpha() * Q;
-                double uOfUser;
-
-                // what is the max q ?
-                for(int j = 0; qOfUser - j < 0; j++)
+                System.out.println("##################");
+                System.out.println("Current quantity of user(" + userId +"): " + qCurrent + ". The quantity he need is: " + qUserNeed);
+                if(qCurrent > qUserNeed)
                 {
-
+                    System.out.println("User " + userId + " is passive seller");
+                    System.out.println("User " + userId + " received " + (qCurrent-qUserNeed)*w);
+                    usersList.get(i).setqCurrent(qUserNeed);
                 }
+                else
+                {
+                    System.out.println("User " + userId + " is passive buyer");
+                    System.out.println("User " + userId + " bought amount of " + (qUserNeed-qCurrent) + " and paid: " + (qUserNeed-qCurrent)*w);
+                    usersList.get(i).setqCurrent(qUserNeed);
+                }
+
+                // Calculate new Q
+                double NewQ = 0;
+                for (User user: usersList)
+                {
+                    NewQ = NewQ + user.getq();
+                }
+
+                // Calculate C(Q)
+                // C(Q) = sum of w*q
+                double cQ = 0;
+                for (User user: usersList)
+                {
+                    cQ = cQ + (w * user.getqCurrent()); // TODO: CHECK IF NEED w * q (The amount he need)
+                }
+
+                // Calculate new w by C(Q)
+                double NewW = cQ / NewQ;
+
+
+                result = new SimulationResult(formatter.format(date), Q+"", NewQ+"", w+"", NewW+"", "", "");
             }
         }
         else
         {
-            System.out.println("NO DEAL");
+            System.out.println("Policy not supported");
         }
 
 
