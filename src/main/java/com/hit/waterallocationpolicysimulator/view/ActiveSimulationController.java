@@ -70,7 +70,7 @@ public class ActiveSimulationController extends Pane
     private boolean isFirstRun = true;
 
     double w; // Price
-    double Q; // Aggregate quantity
+    double Q; // Aggregate quantity of the country + other sources
     double N; // Number of users
     int numOfPairs; // Number of pairs to try make a deal
 
@@ -212,6 +212,7 @@ public class ActiveSimulationController extends Pane
             numOfPairs = Integer.parseInt(NumberOfPairs);
 
 
+
             System.out.println("User list creation started");
             for (int i=0 ; i<N ; i++)
             {
@@ -245,7 +246,7 @@ public class ActiveSimulationController extends Pane
             System.out.println("w = " + w + ", Q = " + Q);
 
             System.out.println("#### Run Active Simulation ####");
-            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.QUANTITY, userList, w, Q, numOfPairs);
+            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.QUANTITY, userList, w, Q, 0, 0);
 
             if(result != null)
             {

@@ -62,7 +62,9 @@ public class PassiveSimulationController extends Pane
     private boolean isFirstRun = true;
 
     double w; // Price
-    double Q; // Aggregate quantity
+    double initW; // Price - The initial price - Never change
+    double Q; // Aggregate quantity of the country + other sources
+    double initQ; // Aggregate quantity of the country - Never change
     double N; // Number of users
     int marginalCost; // Number of pairs to try make a deal
 
@@ -201,7 +203,9 @@ public class PassiveSimulationController extends Pane
             String MarginalCost = marginalCostTextFieldPassive.getText();
 
             w = Double.parseDouble(wString);
+            initW = w;
             Q = Double.parseDouble(QString);
+            initQ = Q;
             N = Double.parseDouble(NString);
             marginalCost = Integer.parseInt(MarginalCost);
 
@@ -239,7 +243,7 @@ public class PassiveSimulationController extends Pane
             System.out.println("w = " + w + ", Q = " + Q);
 
             System.out.println("#### Run Passive Simulation ####");
-            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.PRICE, userList, w, Q, 0);
+            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.PRICE, userList, w, Q, initW, initQ);
 
             if(result != null)
             {
