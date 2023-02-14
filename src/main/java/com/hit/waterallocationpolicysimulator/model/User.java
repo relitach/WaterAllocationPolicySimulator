@@ -14,24 +14,28 @@ public class User
     private double q; // the quantity of water the user NEEDS !
     private double qCurrent; // the current quantity of water the user HAVE !
     private double u; // u = f(qCurrent) - w * qCurrent
-    private boolean isParticipatingNextSimulation; // u = f(qCurrent) - w * qCurrent
+    private boolean isParticipatingNextSimulation;
 
     private DecimalFormat df = new DecimalFormat("####0.000");
 
 
 
-    public User(int id, double alpha, double a, double b, double w, double Q, boolean isParticipatingNextSimulation) {
+    public User(int id, double alpha, double a, double b, double w, double Q) {
         this.id = id;
         this.alpha = alpha;
         this.a = a;
         this.b = b;
         this.w = w;
         this.qCurrent = alpha * Q;
-        this.isParticipatingNextSimulation = isParticipatingNextSimulation;
         inverseDemandFunction();
         producedValue();
-
         this.u = utilityFunction(qCurrent);
+        CheckIsUserPlayNextRound();
+
+//        if(w != demandFunction(q))
+//        {
+//            System.out.println("###### Failed ######");
+//        }
 //        this.u = demandFunction(qCurrent) - w * qCurrent;
 
     }
@@ -99,17 +103,18 @@ public class User
     /**
      * Produced Function
      * Produced value is v = a*q^b
+     *  פונקצית ייצור
      * @return v
      */
     public void producedValue()
     {
-        if(q == 0)
+        if(qCurrent == 0)
         {
             this.v = 0;
         }
         else
         {
-            this.v = Double.valueOf(df.format(a * Math.pow(q, b)));
+            this.v = Double.valueOf(df.format(a * Math.pow(qCurrent, b)));
         }
     }
 
@@ -117,7 +122,7 @@ public class User
     /**
      * Demand function
      * The price of water - Dv = a*b*q^(b-1)
-     *
+     *   פונקצית ביקוש = ערך תפוקה שולית
      * @return Dv
      */
     public double demandFunction(double quantity)
@@ -131,15 +136,21 @@ public class User
         return Double.valueOf(df.format(Dv));
     }
 
+    /**
+     * Utility Function
+     * u = a * q^b
+     *
+     * @return u
+     */
     public double utilityFunction(double quantity)
     {
         if(quantity == 0)
         {
             return 0;
         }
-
-//        this.u =  a * Math.pow(quantity, b);
-        return Double.valueOf(df.format(a * Math.pow(quantity, b)));
+    // a*q^b - w*q
+    //        this.u =  a * Math.pow(quantity, b);
+        return Double.valueOf(df.format(a * Math.pow(quantity, b) - w*quantity));
     }
 
     /**
@@ -148,8 +159,54 @@ public class User
      */
     public void inverseDemandFunction()
     {
-        q =  Double.valueOf(df.format(Math.pow((w /(a * b)), (-1)*(b-1))));
+
+        double base = (w /(a * b));
+        double exponent = 1/(b-1);
+        q =  Double.valueOf(df.format(Math.pow(base, exponent)));
     }
+
+    public void CheckIsUserPlayNextRound()
+    {
+        Boolean isPlayNextRound = false;
+
+        // Check if user is buyer or seller
+        if(getq() < getqCurrent())
+        {
+            // Check as Seller
+            double amountOfQuantityUserCanSell = getqCurrent();
+            for(double x = 0; x <= amountOfQuantityUserCanSell; x += 0.001)
+            {
+                // u = f(q)   -   w*q   + x*(w-ac) = efficiency = money
+                // x * (w-ac) => the profit
+
+                double u = utilityFunction(getqCurrent() - x) - x * demandFunction(getqCurrent() - x);
+                if(u > getu())
+                {
+                    isPlayNextRound = true;
+                    break;
+                }
+            }
+
+        }
+        else
+        {
+            // Check as Buyer
+            double amountOfQuantityUserCanBuy = Double.valueOf(df.format(getq() - getqCurrent()));
+            for(double x = 0; x <= amountOfQuantityUserCanBuy; x += 0.001)
+            {
+                // u = f(q)-w*q + x * demandfunction = efficiency = money
+                double u = utilityFunction(getqCurrent() + x) + x * demandFunction(getqCurrent() + x);
+                if(u > getu())
+                {
+                    isPlayNextRound = true;
+                    break;
+                }
+            }
+        }
+
+        setIsParticipatingNextSimulation(isPlayNextRound ? true : false);
+    }
+
 
     @Override
     public String toString() {
@@ -160,6 +217,7 @@ public class User
                 ", b=" + b +
                 ", v=" + v +
                 ", w=" + w +
+                ", u=" + u +
                 ", q=" + q +
                 ", qCurrent=" + qCurrent +
                 ", isParticipatingNextSimulation=" + isParticipatingNextSimulation +

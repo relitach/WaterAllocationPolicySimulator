@@ -159,11 +159,11 @@ public class ActiveSimulationController extends Pane
     private void initDefaultParams()
     {
 
-        wTextFieldActive.setText("50");
+        wTextFieldActive.setText("0.7");
 
-        qTextFieldActive.setText("300");
+        qTextFieldActive.setText("200");
 
-        nTextFieldActive.setText("250");
+        nTextFieldActive.setText("100");
 
         numOfPairsTextFieldActive.setText("40");
 
@@ -221,24 +221,52 @@ public class ActiveSimulationController extends Pane
                 r = new Random();
                 double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
 
-                User tempUser = new User(i, Q/N/100, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q, true);
+                User tempUser = new User(i, Q/N/Q, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
                 System.out.println("Generated new user: " + tempUser.toString());
                 userList.add(tempUser);
             }
-            System.out.println("User list creation finished");
 
+//            Q = 1;
+//            w = 0.7;
+//
+//            // יעיל
+//            Random r = new Random();
+////            double a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
+//            double a = 1;
+//            r = new Random();
+////            double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
+//            double b = 0.5;
+//
+//            User tempUser = new User(0, 0.8, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
+//            System.out.println("Generated new user: " + tempUser.toString());
+//            userList.add(tempUser);
+//
+//
+//            // לא יעיל
+//
+//            r = new Random();
+////            a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
+//            a = 2;
+//            r = new Random();
+////            b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
+//            b = 0.6;
+
+//            tempUser = new User(1, 0.2, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
+//            System.out.println("Generated new user: " + tempUser.toString());
+//            userList.add(tempUser);
+
+            System.out.println("User list creation finished");
         }
         else
         {
             // Update params of user
             for (int i=0 ; i<N ; i++)
             {
-
-                userList.get(i).setAlpha(Q/N/100);
+                userList.get(i).setAlpha(Q/N/Q);
                 userList.get(i).setW(w);
                 userList.get(i).inverseDemandFunction();
                 userList.get(i).producedValue();
-
+                userList.get(i).CheckIsUserPlayNextRound();
             }
         }
         if(userList != null)

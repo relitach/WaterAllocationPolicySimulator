@@ -46,46 +46,11 @@ public class SimCommon
         // Check which player gonna play in the next simulation
         for (User user : usersList)
         {
-            Boolean isPlayNextRound = false;
-
-            // Check if user is buyer or seller
-            if(user.getq() < user.getqCurrent())
+            user.CheckIsUserPlayNextRound();
+            if (!user.getIsParticipatingNextSimulation())
             {
-                // Check as Seller
-                double amountOfQuantityUserCanSell = user.getqCurrent();
-                for(double x = 0; x <= amountOfQuantityUserCanSell; x += 0.001)
-                {
-                    // u = f(q)-w*q + x * (w-ac) = efficiency = money
-                    // x * (w-ac) => the profit
-                    double u = user.utilityFunction(user.getqCurrent() - x) -  w * (user.getqCurrent() - x) + x * user.demandFunction(user.getqCurrent() + x);
-                    if(u > user.getu())
-                    {
-                        isPlayNextRound = true;
-                        break;
-                    }
-                }
-
+                System.out.println("User " + user.getId() + " is not play in the next simulation");
             }
-            else
-            {
-                // Check as Buyer
-                double amountOfQuantityUserCanBuy = Double.valueOf(df.format(user.getq() - user.getqCurrent()));
-                for(double x = 0; x <= amountOfQuantityUserCanBuy; x += 0.001)
-                {
-                    // u = f(q)-w*q + x * demandfunction = efficiency = money
-                    double u = user.utilityFunction(user.getqCurrent() + x) -  w * (user.getqCurrent() + x) + x * user.demandFunction(user.getqCurrent() + x);
-                    if(u > user.getu())
-                    {
-                        isPlayNextRound = true;
-                        break;
-                    }
-                }
-            }
-
-
-
-
-            user.setIsParticipatingNextSimulation(isPlayNextRound ? true : false);
         }
 
 
@@ -169,14 +134,24 @@ public class SimCommon
 
             for (User user : usersList)
             {
+                System.out.println("#### Looking for deal with user id: " + user.getId() + " ####");
+
                 if(user.getIsParticipatingNextSimulation())
                 {
                     // Check if user is buyer or seller
                     if(user.getq() < user.getqCurrent())
                     {
+                        System.out.println("User id: " + user.getId() + " is seller");
+
                         // User is seller
                         for (User buyer : usersList)
                         {
+                            // Validate user is not do deal with him self
+                            if(user.getId() == buyer.getId() || !buyer.getIsParticipatingNextSimulation())
+                            {
+                                continue;
+                            }
+
                             // Check if the buyer is really buyer
                             if(buyer.getq() > buyer.getqCurrent())
                             {
@@ -189,11 +164,19 @@ public class SimCommon
                     }
                     else
                     {
+                        System.out.println("User id: " + user.getId() + " is buyer");
+
                         // User is buyer
                         for (User seller : usersList)
                         {
-                            // Check if the seller is really buyer
-                            if(seller.getq() > seller.getqCurrent())
+                            // Validate user is not do deal with him self
+                            if(user.getId() == seller.getId() || !seller.getIsParticipatingNextSimulation())
+                            {
+                                continue;
+                            }
+
+                            // Check if the seller is really seller
+                            if(seller.getq() < seller.getqCurrent())
                             {
                                 if(CheckForDeal(seller , user, w))
                                 {
@@ -203,13 +186,17 @@ public class SimCommon
                         }
                     }
                 }
+                else
+                {
+                    System.out.println("User id: " + user.getId() + " is not play in the simulation");
+                }
             }
 
             // Calculate new Q
             double NewQ = 0;
             for (User user: usersList)
             {
-                NewQ = NewQ + user.getq();
+                NewQ = NewQ + user.getqCurrent();
             }
 
             // Calculate C(Q)
@@ -217,7 +204,7 @@ public class SimCommon
             double cQ = 0;
             for (User user: usersList)
             {
-                cQ = cQ + (w * user.getqCurrent()); // TODO: CHECK IF NEED w * q (The amount he need)
+                cQ = cQ + (w * user.getqCurrent());
             }
 
             // Calculate new w by C(Q)
@@ -243,7 +230,7 @@ public class SimCommon
                 System.out.println("Current quantity of user(" + userId +"): " + qCurrent + ". The quantity he need is: " + qUserNeed);
 
 
-
+                // TODO: Ask eyal if its ok that we just compare the quantity and not computing the
                 if(qCurrent > qUserNeed)
                 {
                     System.out.println("User " + userId + " is passive seller");
@@ -260,7 +247,7 @@ public class SimCommon
 
                      */
 
-                    cQ = cQ + (initW * initialQuantity) + (w * (qUserNeed - initialQuantity));
+                    cQ = cQ + (initW * initialQuantity) - (w * (initialQuantity - qUserNeed));
 
                 }
                 else
@@ -307,9 +294,11 @@ public class SimCommon
 
         for(double x = 0; x <= seller.getqCurrent(); x += 0.001)
         {
-            // u = f(q)-w*q = efficiency = money
-            double uBuyer = buyer.utilityFunction(buyer.getqCurrent() + x) -  w * (buyer.getqCurrent() + x) + x * buyer.demandFunction(buyer.getqCurrent() + x);
-            double uSeller = seller.utilityFunction(seller.getqCurrent() - x) -  w * (seller.getqCurrent() - x)  + x * buyer.demandFunction(buyer.getqCurrent() + x);
+            // before - uBuyerDeal = f(q)-w*q
+            // after - uBuyer = f(q)-w*q
+            double uBuyer = buyer.utilityFunction(buyer.getqCurrent() + x) - x * buyer.demandFunction(buyer.getqCurrent() + x);
+
+            double uSeller = seller.utilityFunction(seller.getqCurrent() - x) + x * seller.demandFunction(seller.getqCurrent() - x);
             if(uBuyer > uBuyerDeal && uSeller > uSellerDeal)
             {
                 uBuyerDeal = uBuyer;
@@ -319,7 +308,9 @@ public class SimCommon
         }
         if(dealQuantity > 0)
         {
-            System.out.println("Deal");
+            System.out.println("Buyer user: " + buyer.toString());
+            System.out.println("Seller user: " + seller.toString());
+            System.out.println("Deal ! Quantity of water in the deal: " + dealQuantity);
             buyer.setqCurrent(buyer.getqCurrent() + dealQuantity);
             seller.setqCurrent(seller.getqCurrent() - dealQuantity);
 
@@ -330,7 +321,7 @@ public class SimCommon
         }
         else
         {
-            System.out.println("No Deal");
+            //System.out.println("No Deal");
             return false;
         }
     }

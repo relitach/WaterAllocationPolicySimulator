@@ -155,11 +155,11 @@ public class PassiveSimulationController extends Pane
     private void initDefaultParams()
     {
 
-        wTextFieldPassive.setText("50");
+        wTextFieldPassive.setText("0.7");
 
-        qTextFieldPassive.setText("300");
+        qTextFieldPassive.setText("200");
 
-        nTextFieldPassive.setText("250");
+        nTextFieldPassive.setText("100");
 
         marginalCostTextFieldPassive.setText("40");
 
@@ -218,7 +218,7 @@ public class PassiveSimulationController extends Pane
                 r = new Random();
                 double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
 
-                User tempUser = new User(i, Q/N/100, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q, true);
+                User tempUser = new User(i, Q/N/Q, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
                 System.out.println("Generated new user: " + tempUser.toString());
                 userList.add(tempUser);
             }
@@ -231,10 +231,11 @@ public class PassiveSimulationController extends Pane
             for (int i=0 ; i<N ; i++)
             {
 
-                userList.get(i).setAlpha(Q/N/100);
+                userList.get(i).setAlpha(Q/N/Q);
                 userList.get(i).setW(w);
                 userList.get(i).inverseDemandFunction();
                 userList.get(i).producedValue();
+                userList.get(i).CheckIsUserPlayNextRound();
 
             }
         }
