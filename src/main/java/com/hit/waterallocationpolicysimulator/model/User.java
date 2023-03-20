@@ -154,7 +154,7 @@ public class User
     }
 
     /**
-     * Inverse demand function - q = [Dv/(a*b)]^((-1)*(b-1))
+     * Inverse demand function - q = [Dv/(a*b)]^(1/(b-1))
      * @return q - the quantity the user NEEDS !
      */
     public void inverseDemandFunction()
@@ -163,6 +163,11 @@ public class User
         double base = (w /(a * b));
         double exponent = 1/(b-1);
         q =  Double.valueOf(df.format(Math.pow(base, exponent)));
+        // The quantity of each user can increase by 50% maximum
+        if(q > (qCurrent * 2))
+        {
+            q = qCurrent * 2;
+        }
     }
 
     public void CheckIsUserPlayNextRound()
