@@ -57,80 +57,14 @@ public class SimCommon
 
         if(policyType == SimTypes.PolicyType.QUANTITY)  // Active market
         {
-//            System.out.println("Try to find " + numOfPairs + " pairs of buyer and seller");
-//
-//            Random rand = new Random();
-//            User buyer;
-//            User seller;
-//            int amountOfDeals = 0;
-//
-//            for(int i =0; i < numOfPairs ; i++)
-//            {
-//                System.out.println("#### Pair number: " + i + " ####");
-//
-//                int buyerId = rand.nextInt(usersList.size());
-//                int sellerId;
-//                buyer = usersList.get(buyerId);
-//                do
-//                {
-//                    sellerId = rand.nextInt(usersList.size());
-//                    seller = usersList.get(sellerId);
-//                } while(buyerId == sellerId || !seller.getIsParticipatingNextSimulation());
-//
-//
-//
-//                System.out.println("Current quantity of buyer(" + buyer.getId() +"): " + buyer.getqCurrent() + ". The quantity he need is: " + buyer.getq());
-//                System.out.println("Current quantity of seller(" + seller.getId() +"): " + seller.getqCurrent() +  ". The quantity he need is: " + seller.getq());
-//
-//
-//                double dealQuantity = 0;
-//                double uBuyer;
-//                double uSeller;
-//                double uBuyerDeal = buyer.getu();
-//                double uSellerDeal = seller.getu();
-//
-//                System.out.println("Current u of buyer(" + buyer.getId() +"): " + uBuyerDeal);
-//                System.out.println("Current u of seller(" + seller.getId() +"): " + uSellerDeal);
-//
-//                // Check if the buyer need to buy and if the seller have to sell more than he need
-//                if(buyer.getq() < buyer.getqCurrent() || seller.getq() < seller.getqCurrent())
-//                {
-//                    System.out.println("Not pair of buyer and seller");
-//                    continue;
-//                }
-//
-//                for(int x = 0; x <= seller.getqCurrent(); x++)
-//                {
-//                    // u = f(q)-w*q = efficiency = money
-//                    uBuyer = buyer.utilityFunction(buyer.getqCurrent() + x) -  w * (buyer.getqCurrent() + x);
-//                    uSeller = seller.utilityFunction(seller.getqCurrent() - x) -  w * (seller.getqCurrent() - x);
-//                    if(uBuyer > uBuyerDeal && uSeller > uSellerDeal)
-//                    {
-//                        uBuyerDeal = uBuyer;
-//                        uSellerDeal = uSeller;
-//                        dealQuantity = x;
-//                    }
-//                }
-//                if(dealQuantity > 0)
-//                {
-//                    System.out.println("Deal");
-//                    buyer.setqCurrent(buyer.getqCurrent() + dealQuantity);
-//                    seller.setqCurrent(seller.getqCurrent() - dealQuantity);
-//
-//                    System.out.println("New quantity of buyer(" + buyer.getId() +"): " + buyer.getqCurrent());
-//                    System.out.println("New quantity of seller(" + seller.getId() +"): " + seller.getqCurrent());
-//                    amountOfDeals++;
-//
-//                }
-//                else
-//                {
-//                    System.out.println("No Deal");
-////                    buyer.setIsParticipatingNextSimulation(false);
-////                    seller.setIsParticipatingNextSimulation(false);
-//                }
-//            }
+            for (User user : usersList)
+            {
+                user.setqCurrent(user.getAlpha() * Q);;
+            }
+
 
             int amountOfDeals = 0;
+            int amonutOfBuyersWithNoDeal = 0;
 
             for (User user : usersList)
             {
@@ -142,6 +76,7 @@ public class SimCommon
                     if(user.getq() < user.getqCurrent())
                     {
                         System.out.println("User id: " + user.getId() + " is seller");
+
 
                         // User is seller
                         for (User buyer : usersList)
@@ -159,13 +94,17 @@ public class SimCommon
                                 {
                                     amountOfDeals++;
                                 }
+                                else
+                                {
+//
+                                }
                             }
                         }
                     }
                     else
                     {
                         System.out.println("User id: " + user.getId() + " is buyer");
-
+                        boolean isBuyerFoundDeal = false;
                         // User is buyer
                         for (User seller : usersList)
                         {
@@ -181,8 +120,18 @@ public class SimCommon
                                 if(CheckForDeal(seller , user, w))
                                 {
                                     amountOfDeals++;
+                                    isBuyerFoundDeal = true;
+                                }
+                                else
+                                {
+
                                 }
                             }
+                        }
+
+                        if(!isBuyerFoundDeal)
+                        {
+                            amonutOfBuyersWithNoDeal++;
                         }
                     }
                 }
@@ -192,12 +141,13 @@ public class SimCommon
                 }
             }
 
-            // Calculate new Q
+            // Calculate new Q - its Active no need to calculate new Q. the manager decided the new Q
             double NewQ = 0;
-            for (User user: usersList)
-            {
-                NewQ = NewQ + user.getqCurrent();
-            }
+//            for (User user: usersList)
+//            {
+//                NewQ = NewQ + user.getqCurrent();
+//            }
+            NewQ = Q;
 
             // Calculate C(Q)
             // C(Q) = sum of w*q
@@ -211,7 +161,7 @@ public class SimCommon
             double NewW = cQ / NewQ;
 
 
-            result = new SimulationResult(formatter.format(date), Q+"", NewQ+"", w+"", NewW+"", amountOfDeals+"", "");
+            result = new SimulationResult(formatter.format(date), Q+"", NewQ+"", w+"", NewW+"", amountOfDeals+"", amonutOfBuyersWithNoDeal+"");
         }
         else if (policyType == SimTypes.PolicyType.PRICE) // Passive market
         {
@@ -221,6 +171,12 @@ public class SimCommon
             // TODO: Ask eyal if in every new year we use the same current q from the last simulation or use Alpha * initQ
             for (User user: usersList)
             {
+                 // TODO: CHECK IF NEED - because if its negative they should get money from the country (As passive buyer)
+                if(user.getu() < 0)
+                {
+                    break;
+                }
+
                 int userId = user.getId();
                 double qCurrent = user.getqCurrent();
                 double qUserNeed = user.getq();
@@ -271,9 +227,13 @@ public class SimCommon
 
             }
 
+
+
+
             // Calculate new w by C(Q)
             double NewW = cQ / NewQ;
 
+            double costOfAllWater = (initW * initQ) + (NewW * cQ);
 
             result = new SimulationResult(formatter.format(date), Q+"", NewQ+"", w+"", NewW+"", "", "");
         }

@@ -147,7 +147,7 @@ public class ActiveSimulationController extends Pane
         amountOfDealsColumn.setCellValueFactory(new PropertyValueFactory<>("amountOfDeals"));
         amountOfDealsColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.15));
 
-        TableColumn AverageCostColumn = new TableColumn("Average Cost");
+        TableColumn AverageCostColumn = new TableColumn("No deals");
         AverageCostColumn.setCellValueFactory(new PropertyValueFactory<>("AverageCost"));
         AverageCostColumn.prefWidthProperty().bind(activeTable.widthProperty().multiply(0.15));
 
@@ -191,8 +191,8 @@ public class ActiveSimulationController extends Pane
             wTextFieldActive.setEditable(false);
             wTextFieldActive.setDisable(true);
 
-            qTextFieldActive.setEditable(false);
-            qTextFieldActive.setDisable(true);
+//            qTextFieldActive.setEditable(false);
+//            qTextFieldActive.setDisable(true);
 
             nTextFieldActive.setEditable(false);
             nTextFieldActive.setDisable(true);
@@ -271,6 +271,9 @@ public class ActiveSimulationController extends Pane
         }
         if(userList != null)
         {
+            String QString = qTextFieldActive.getText();
+            Q = Double.parseDouble(QString);
+
             System.out.println("w = " + w + ", Q = " + Q);
 
             System.out.println("#### Run Active Simulation ####");
@@ -279,7 +282,7 @@ public class ActiveSimulationController extends Pane
             if(result != null)
             {
                 activeTable.getItems().add(result);
-                Q = Double.valueOf(result.getNewQ());
+//                Q = Double.valueOf(result.getNewQ());
                 w = Double.valueOf(result.getNewW());
                 Utils.writeUserListToCSVFile(userList, outputFolderPathTextFieldActive.getText() + "\\Active_" + result.getYear()
                         .replace('/','_')
