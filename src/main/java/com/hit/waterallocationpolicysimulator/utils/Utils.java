@@ -1,5 +1,6 @@
 package com.hit.waterallocationpolicysimulator.utils;
 
+import com.hit.waterallocationpolicysimulator.model.DealResult;
 import com.hit.waterallocationpolicysimulator.model.User;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -129,6 +130,51 @@ public class Utils
                         String.valueOf(userList.get(i).getqCurrent()),
                         String.valueOf(userList.get(i).getu()),
                         String.valueOf(userList.get(i).getIsParticipatingNextSimulation())};
+                writer.writeNext(dataRow);
+            }
+
+
+            // closing writer connection
+            writer.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void writeDealsListToCSVFile(ArrayList<DealResult> dealList, String filePath)
+    {
+        // first create file object for file placed at location
+        // specified by filepath
+        File file = new File(filePath);
+
+        try {
+            file.createNewFile();
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(file);
+
+            // create CSVWriter object filewriter object as parameter
+            CSVWriter writer = new CSVWriter(outputfile);
+
+            // adding header to csv
+            String[] header = { "result",
+                    "buyerId",
+                    "sellerId",
+                    "priceOfDeal",
+                    "amountOfQuantityInDeal"};
+            writer.writeNext(header);
+
+            // add data to csv
+            for (int i = 0; i <dealList.size(); i++ )
+            {
+                String[] dataRow = {
+                        String.valueOf(dealList.get(i).result),
+                        String.valueOf(dealList.get(i).buyerId),
+                        String.valueOf(dealList.get(i).sellerId),
+                        String.valueOf(dealList.get(i).priceOfDeal),
+                        String.valueOf(dealList.get(i).amountOfQuantityInDeal)
+                };
                 writer.writeNext(dataRow);
             }
 

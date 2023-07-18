@@ -1,5 +1,7 @@
 package com.hit.waterallocationpolicysimulator.model;
 
+import java.util.ArrayList;
+
 public class SimulationResult
 {
     private String year;
@@ -9,6 +11,7 @@ public class SimulationResult
     private String NewW;
     private String AmountOfDeals;
     private String AverageCost;
+    public ArrayList<DealResult> dealResults;
 
     public SimulationResult(String year, String Q, String NewQ, String w, String NewW, String AmountOfDeals, String AverageCost) {
         this.year = year;

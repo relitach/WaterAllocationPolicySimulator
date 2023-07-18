@@ -5,18 +5,19 @@ import java.text.DecimalFormat;
 public class User
 {
 
-    private int id;
-    private double alpha;
-    private double a; // a: [1 - 3]
-    private double b; // b: [0.5 - 0.99]
-    private double v; // Produced value of the water
-    private double w; // Water price
-    private double q; // the quantity of water the user NEEDS !
-    private double qCurrent; // the current quantity of water the user HAVE !
-    private double u; // u = f(qCurrent) - w * qCurrent
-    private boolean isParticipatingNextSimulation;
+    public int id;
+    public double alpha;
+    public double a; // a: [1 - 3]
+    public double b; // b: [0.5 - 0.99]
+    public double v; // Produced value of the water
+    public double w; // Water price
+    public double q; // the quantity of water the user NEEDS !
+    public double qCurrent; // the current quantity of water the user HAVE !
+    public double u; // Utility - u = f(qCurrent) - w * qCurrent
+    public double lamda; // Lamda = f'(q) / f''(q)  * q
+    public boolean isParticipatingNextSimulation;
 
-    private DecimalFormat df = new DecimalFormat("####0.000");
+    public DecimalFormat df = new DecimalFormat("####0.000");
 
 
 
@@ -39,6 +40,17 @@ public class User
 //        this.u = demandFunction(qCurrent) - w * qCurrent;
 
     }
+
+    public void SetParams(double alpha, double w, double Q)
+    {
+        this.w = w;
+        this.qCurrent = alpha * Q;
+        inverseDemandFunction();
+        producedValue();
+        this.u = utilityFunction(qCurrent);
+        CheckIsUserPlayNextRound();
+    }
+
 
     public int getId() {
         return id;
@@ -138,9 +150,9 @@ public class User
 
     /**
      * Utility Function
-     * u = a * q^b
+     * u = a*q^b - w*q
      *
-     * @return u
+     * @return u תועלת -
      */
     public double utilityFunction(double quantity)
     {
@@ -148,10 +160,37 @@ public class User
         {
             return 0;
         }
-    // a*q^b - w*q
-    //        this.u =  a * Math.pow(quantity, b);
+        //        this.u =  a * Math.pow(quantity, b);
         return Double.valueOf(df.format(a * Math.pow(quantity, b) - w*quantity));
     }
+
+
+    /**
+     * Efficiency Function
+     *
+     * Lamda = f''(q) / f'(q)  * q
+     *
+     * @return lamda יעילות -
+     */
+    public double efficiencyFunction()
+    {
+        lamda = secondDerivative(qCurrent)/firstDerivative(qCurrent) * qCurrent;
+        return lamda;
+    }
+
+    // Same as demand function - f'(q) = a*b*q^(b-1)
+    public double firstDerivative(double quantity)
+    {
+        return  a * b * Math.pow(quantity, b-1);
+    }
+
+    // f''(q) = ab*(b-1)*q^(b-2)
+    public double secondDerivative(double quantity)
+    {
+        return  a * b * (b-1) * Math.pow(quantity, b-2);
+    }
+
+
 
     /**
      * Inverse demand function - q = [Dv/(a*b)]^(1/(b-1))

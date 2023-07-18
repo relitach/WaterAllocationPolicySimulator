@@ -51,7 +51,10 @@ public class PassiveSimulationController extends Pane
     private TextField nTextFieldPassive;
 
     @FXML
-    private TextField marginalCostTextFieldPassive;
+    private TextField owTextFieldPassive;
+
+    @FXML
+    private TextField oqTextFieldPassive;
 
     @FXML
     private TableView passiveTable;
@@ -61,9 +64,11 @@ public class PassiveSimulationController extends Pane
     private ArrayList<User> userList = new ArrayList<User>();;
     private boolean isFirstRun = true;
 
-    double w; // Price
+    double w; // Price of local water
+    double ow; // Price of outside water
     double initW; // Price - The initial price - Never change
-    double Q; // Aggregate quantity of the country + other sources
+    double Q; // Aggregate quantity of the country
+    double OQ; // Aggregate quantity of other sources
     double initQ; // Aggregate quantity of the country - Never change
     double N; // Number of users
     int marginalCost; // Number of pairs to try make a deal
@@ -159,9 +164,11 @@ public class PassiveSimulationController extends Pane
 
         qTextFieldPassive.setText("200");
 
-        nTextFieldPassive.setText("100");
+        owTextFieldPassive.setText("3");
 
-        marginalCostTextFieldPassive.setText("40");
+        oqTextFieldPassive.setText("400");
+
+        nTextFieldPassive.setText("100");
 
     }
 
@@ -190,24 +197,30 @@ public class PassiveSimulationController extends Pane
             qTextFieldPassive.setEditable(false);
             qTextFieldPassive.setDisable(true);
 
+//            owTextFieldPassive.setEditable(false);
+//            owTextFieldPassive.setDisable(true);
+//
+//            oqTextFieldPassive.setEditable(false);
+//            oqTextFieldPassive.setDisable(true);
+
             nTextFieldPassive.setEditable(false);
             nTextFieldPassive.setDisable(true);
-
-            marginalCostTextFieldPassive.setEditable(false);
-            marginalCostTextFieldPassive.setDisable(true);
 
 
             String wString = wTextFieldPassive.getText();
             String QString = qTextFieldPassive.getText();
+            String owString = owTextFieldPassive.getText();
+            String OQString = oqTextFieldPassive.getText();
             String NString = nTextFieldPassive.getText();
-            String MarginalCost = marginalCostTextFieldPassive.getText();
 
             w = Double.parseDouble(wString);
             initW = w;
             Q = Double.parseDouble(QString);
             initQ = Q;
+            ow = Double.parseDouble(owString);
+            OQ = Double.parseDouble(OQString);
+
             N = Double.parseDouble(NString);
-            marginalCost = Integer.parseInt(MarginalCost);
 
 
             System.out.println("User list creation started");
@@ -227,31 +240,36 @@ public class PassiveSimulationController extends Pane
         }
         else
         {
+            String owString = owTextFieldPassive.getText();
+            String OQString = oqTextFieldPassive.getText();
+            ow = Double.parseDouble(owString);
+            OQ = Double.parseDouble(OQString);
+
             // Update params of user
             for (int i=0 ; i<N ; i++)
             {
-
-                userList.get(i).setAlpha(Q/N/Q);
-                userList.get(i).setW(w);
-                userList.get(i).inverseDemandFunction();
-                userList.get(i).producedValue();
-                userList.get(i).CheckIsUserPlayNextRound();
-
+                userList.get(i).SetParams(Q/N/Q, w, Q);
             }
         }
+
         if(userList != null)
         {
             System.out.println("w = " + w + ", Q = " + Q);
 
             System.out.println("#### Run Passive Simulation ####");
-            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.PRICE, userList, w, Q, initW, initQ);
+            SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.PRICE, userList, w, Q, ow, OQ);
 
             if(result != null)
             {
                 passiveTable.getItems().add(result);
-                Q = Double.valueOf(result.getNewQ());
-                w = Double.valueOf(result.getNewW());
+//                Q = Double.valueOf(result.getNewQ());
+//                w = Double.valueOf(result.getNewW());
                 Utils.writeUserListToCSVFile(userList, openCsvFileTextFieldPassive.getText() + "\\Passive_" + result.getYear()
+                        .replace('/','_')
+                        .replace(' ','_')
+                        .replace(':','_')+ ".csv");
+
+                Utils.writeDealsListToCSVFile(result.dealResults, openCsvFileTextFieldPassive.getText() + "\\Passive_Deals_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
@@ -312,21 +330,26 @@ public class PassiveSimulationController extends Pane
 
     public void clear(ActionEvent actionEvent)
     {
-        wTextFieldPassive.clear();
+//        wTextFieldPassive.clear();
         wTextFieldPassive.setEditable(true);
         wTextFieldPassive.setDisable(false);
 
-        qTextFieldPassive.clear();
+//        qTextFieldPassive.clear();
         qTextFieldPassive.setEditable(true);
         qTextFieldPassive.setDisable(false);
 
-        nTextFieldPassive.clear();
+//        owTextFieldPassive.clear();
+        owTextFieldPassive.setEditable(true);
+        owTextFieldPassive.setDisable(false);
+
+//        oqTextFieldPassive.clear();
+        oqTextFieldPassive.setEditable(true);
+        oqTextFieldPassive.setDisable(false);
+
+
+//        nTextFieldPassive.clear();
         nTextFieldPassive.setEditable(true);
         nTextFieldPassive.setDisable(false);
-
-        marginalCostTextFieldPassive.clear();
-        marginalCostTextFieldPassive.setEditable(true);
-        marginalCostTextFieldPassive.setDisable(false);
 
 
 

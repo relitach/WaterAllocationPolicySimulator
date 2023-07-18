@@ -37,8 +37,8 @@
             <Button fx:id="btnSelectFolderActive" layoutX="620.0" layoutY="99.0" mnemonicParsing="false" text="Select" />
             <Label layoutX="42.0" layoutY="229.0" text="Number of users (N):" />
             <TextField fx:id="nTextFieldActive" layoutX="168.0" layoutY="225.0" />
-            <Label layoutX="42.0" layoutY="267.0" text="Number of pairs:" />
-            <TextField fx:id="numOfPairsTextFieldActive" layoutX="168.0" layoutY="263.0" />
+<!--            <Label layoutX="42.0" layoutY="267.0" text="Number of pairs:" />-->
+<!--            <TextField fx:id="numOfPairsTextFieldActive" layoutX="168.0" layoutY="263.0" />-->
           </children>
       </AnchorPane>
    </children>

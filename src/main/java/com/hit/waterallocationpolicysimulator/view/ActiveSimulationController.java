@@ -55,8 +55,8 @@ public class ActiveSimulationController extends Pane
     @FXML
     private TextField nTextFieldActive;
 
-    @FXML
-    private TextField numOfPairsTextFieldActive;
+//    @FXML
+//    private TextField numOfPairsTextFieldActive;
 
     @FXML
     private TableView activeTable;
@@ -161,11 +161,11 @@ public class ActiveSimulationController extends Pane
 
         wTextFieldActive.setText("0.7");
 
-        qTextFieldActive.setText("200");
+        qTextFieldActive.setText("1000");
 
         nTextFieldActive.setText("100");
 
-        numOfPairsTextFieldActive.setText("40");
+//        numOfPairsTextFieldActive.setText("40");
 
     }
 
@@ -197,19 +197,19 @@ public class ActiveSimulationController extends Pane
             nTextFieldActive.setEditable(false);
             nTextFieldActive.setDisable(true);
 
-            numOfPairsTextFieldActive.setEditable(false);
-            numOfPairsTextFieldActive.setDisable(true);
+//            numOfPairsTextFieldActive.setEditable(false);
+//            numOfPairsTextFieldActive.setDisable(true);
 
 
             String wString = wTextFieldActive.getText();
             String QString = qTextFieldActive.getText();
             String NString = nTextFieldActive.getText();
-            String NumberOfPairs = numOfPairsTextFieldActive.getText();
+//            String NumberOfPairs = numOfPairsTextFieldActive.getText();
 
             w = Double.parseDouble(wString);
             Q = Double.parseDouble(QString);
             N = Double.parseDouble(NString);
-            numOfPairs = Integer.parseInt(NumberOfPairs);
+//            numOfPairs = Integer.parseInt(NumberOfPairs);
 
 
 
@@ -262,11 +262,7 @@ public class ActiveSimulationController extends Pane
             // Update params of user
             for (int i=0 ; i<N ; i++)
             {
-                userList.get(i).setAlpha(Q/N/Q);
-                userList.get(i).setW(w);
-                userList.get(i).inverseDemandFunction();
-                userList.get(i).producedValue();
-                userList.get(i).CheckIsUserPlayNextRound();
+                userList.get(i).SetParams(Q/N/Q, w, Q);
             }
         }
         if(userList != null)
@@ -285,6 +281,12 @@ public class ActiveSimulationController extends Pane
 //                Q = Double.valueOf(result.getNewQ());
                 w = Double.valueOf(result.getNewW());
                 Utils.writeUserListToCSVFile(userList, outputFolderPathTextFieldActive.getText() + "\\Active_" + result.getYear()
+                        .replace('/','_')
+                        .replace(' ','_')
+                        .replace(':','_')+ ".csv");
+
+
+                Utils.writeDealsListToCSVFile(result.dealResults, outputFolderPathTextFieldActive.getText() + "\\Active_Deals_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
@@ -345,21 +347,21 @@ public class ActiveSimulationController extends Pane
 
     public void clear(ActionEvent actionEvent)
     {
-        wTextFieldActive.clear();
+//        wTextFieldActive.clear();
         wTextFieldActive.setEditable(true);
         wTextFieldActive.setDisable(false);
 
-        qTextFieldActive.clear();
+//        qTextFieldActive.clear();
         qTextFieldActive.setEditable(true);
         qTextFieldActive.setDisable(false);
 
-        nTextFieldActive.clear();
+//        nTextFieldActive.clear();
         nTextFieldActive.setEditable(true);
         nTextFieldActive.setDisable(false);
 
-        numOfPairsTextFieldActive.clear();
-        numOfPairsTextFieldActive.setEditable(true);
-        numOfPairsTextFieldActive.setDisable(false);
+//        numOfPairsTextFieldActive.clear();
+//        numOfPairsTextFieldActive.setEditable(true);
+//        numOfPairsTextFieldActive.setDisable(false);
 
 
 
