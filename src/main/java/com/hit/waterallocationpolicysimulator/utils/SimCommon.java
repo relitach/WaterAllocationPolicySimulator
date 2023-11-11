@@ -232,9 +232,11 @@ public class SimCommon
 //                    cQ = cQ + (initW * initialQuantity) - (localW * (initialQuantity - qUserNeed));
 
                     // Calculate only the water that the seller use
-                    cQ = cQ + (localW * qUserNeed);
+                    cQ = cQ + (localW * qUserNeed) ;
 
-                    // TODO: need to calculate the money that the country need to pay to the seller ?
+                    // The money that the country need to pay to the seller
+                    cQ = cQ - ((qCurrent-qUserNeed) * localW);
+
 
 
                 }
