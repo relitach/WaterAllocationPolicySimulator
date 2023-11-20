@@ -67,7 +67,7 @@ public class ActiveSimulationController extends Pane
     private static ActiveSimulationController instance = null;
     private Stage myStage;
     private ArrayList<User> userList = new ArrayList<User>();;
-    private boolean isFirstRun = true;
+    private int numberOfRun = 0;
 
     double w; // Price
     double Q; // Aggregate quantity of the country + other sources
@@ -173,19 +173,9 @@ public class ActiveSimulationController extends Pane
 
     private void runSimulate(ActionEvent actionEvent) {
 
-        // Validate textfield
-//        if()
-//        {
-//
-//        }
-//        else
-//        {
-//
-//        }
 
-        if(isFirstRun)
+        if(numberOfRun == 0)
         {
-            isFirstRun = false;
             DecimalFormat df = new DecimalFormat("####0.000");
 
             wTextFieldActive.setEditable(false);
@@ -212,16 +202,13 @@ public class ActiveSimulationController extends Pane
 //            numOfPairs = Integer.parseInt(NumberOfPairs);
 
 
+            List<SimCommon.BaseUser> baseUsers = SimCommon.getInstance().getBaseParametersForUsers();
 
             System.out.println("User list creation started");
-            for (int i=0 ; i<N ; i++)
+            for (int i=0 ; i<baseUsers.size() ; i++)
             {
-                Random r = new Random();
-                double a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
-                r = new Random();
-                double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
-
-                User tempUser = new User(i, Q/N/Q, Double.valueOf(df.format(a)), Double.valueOf(df.format(b)), w, Q);
+//                User tempUser = new User(i, Q/N/Q, Double.valueOf(df.format(baseUsers.get(i).a)), Double.valueOf(df.format(baseUsers.get(i).b)), w, Q);
+                User tempUser = new User(i, Q/N/Q, baseUsers.get(i).a, baseUsers.get(i).b, w, Q);
                 System.out.println("Generated new user: " + tempUser.toString());
                 userList.add(tempUser);
             }
@@ -259,12 +246,88 @@ public class ActiveSimulationController extends Pane
         }
         else
         {
-            // Update params of user
-            for (int i=0 ; i<N ; i++)
+            if(numberOfRun == 1) // Second run
             {
-                userList.get(i).SetParams(Q/N/Q, w, Q);
+                // Count efficiency users
+                int efficiencyUsers = 0;
+                for (int i=0 ; i<N ; i++)
+                {
+                    if(userList.get(i).isUserWasEfficiencyInLastSim)
+                    {
+                        efficiencyUsers++;
+                    }
+                }
+
+                // Calculate the total percent for all users
+                double totalPercent = 100.0;
+
+                // Update  percent for efficiency users
+                double efficiencyPercent = (2 * totalPercent) / (3 * efficiencyUsers); // Twice the percent of non-efficiency users
+
+                // Update percent for non-efficiency users
+                double nonEfficiencyPercent = totalPercent / (3 * (N - efficiencyUsers));
+
+
+                // alpha*2 for efficiency users
+                for (int i=0 ; i<N ; i++)
+                {
+                    if(userList.get(i).isUserWasEfficiencyInLastSim)
+                    {
+                        userList.get(i).SetParams(efficiencyPercent, w, Q);
+                    }
+                    else
+                    {
+                        userList.get(i).SetParams(nonEfficiencyPercent, w, Q);
+                    }
+                }
             }
+            else if(numberOfRun == 2) // Third run
+            {
+                // alpha*2 for inefficiency users
+                // Count non-efficiency users
+                int nonEfficiencyUsers = 0;
+                for (int i=0 ; i<N ; i++)
+                {
+                    if(!userList.get(i).isUserWasEfficiencyInLastSim)
+                    {
+                        nonEfficiencyUsers++;
+                    }
+                }
+
+                // Calculate the total percent for all users
+                double totalPercent = 100.0;
+
+                // Update  percent for non-efficiency users
+                double nonEfficiencyPercent = (2 * totalPercent) / (3 * nonEfficiencyUsers); // Twice the percent of efficiency users
+
+                // Update percent for efficiency users
+                double efficiencyPercent = totalPercent / (3 * (N - nonEfficiencyUsers));
+
+
+                // alpha*2 for efficiency users
+                for (int i=0 ; i<N ; i++)
+                {
+                    if(userList.get(i).isUserWasEfficiencyInLastSim)
+                    {
+                        userList.get(i).SetParams(efficiencyPercent, w, Q);
+                    }
+                    else
+                    {
+                        userList.get(i).SetParams(nonEfficiencyPercent, w, Q);
+                    }
+                }
+            }
+            else
+            {
+                // Update params of user
+                for (int i=0 ; i<N ; i++)
+                {
+                    userList.get(i).SetParams(Q/N/Q, w, Q);
+                }
+            }
+
         }
+        numberOfRun++;
         if(userList != null)
         {
             String QString = qTextFieldActive.getText();
@@ -367,7 +430,9 @@ public class ActiveSimulationController extends Pane
 
         activeTable.getItems().clear();
 
-        isFirstRun = true;
+        userList.clear();
+//        SimCommon.getInstance().baseUsers = null;
+        numberOfRun = 0;
     }
 
 

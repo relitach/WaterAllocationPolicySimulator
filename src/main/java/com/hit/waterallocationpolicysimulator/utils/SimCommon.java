@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 
 public class SimCommon
@@ -26,6 +27,7 @@ public class SimCommon
 
     private DecimalFormat df = new DecimalFormat("####0.000");
 
+    public List<BaseUser> baseUsers = null;
 
     public static SimCommon getInstance() {
         if (instance == null) {
@@ -188,19 +190,30 @@ public class SimCommon
         {
             double NewQ = 0;
             double cQ = 0;
+            double temp1 = 0;
+            double temp2 = 0;
+
+            double costOfAllWater = (localW * localQ) + (outsideW * outsideQ);
 
             for (User user: usersList)
             {
-                 // TODO: CHECK IF NEED - because if its negative they should get money from the country (As passive buyer)
-                if(user.getu() < 0)
-                {
-                    break;
-                }
-
                 int userId = user.getId();
                 double qCurrent = user.getqCurrent();
                 double qUserNeed = user.getq();
-//                double initialQuantity = user.getAlpha() * initQ;
+
+                 // TODO: CHECK IF NEED - because if its negative they should get money from the country (As passive seller)
+//                if(user.getu() < 0)
+//                {
+//                    // Calculate only the water that the seller use
+//                    cQ = cQ + (localW * qUserNeed) ;
+//
+//                    // The money that the country need to pay to the seller
+//                    cQ = cQ - ((qCurrent-qUserNeed) * localW);
+//                    continue;
+//                }
+
+
+                // double initialQuantity = user.getAlpha() * initQ;
 
                 System.out.println("##################");
                 System.out.println("Current quantity of user(" + userId +"): " + qCurrent + ". The quantity he need is: " + qUserNeed);
@@ -209,12 +222,11 @@ public class SimCommon
                 /*
                  ############# Passive Seller #############
                 */
-                // TODO: Ask eyal if its ok that we just compare the quantity and not computing the
                 if(qCurrent > qUserNeed)
                 {
                     double quantityToSell = qCurrent - qUserNeed;
                     System.out.println("User " + userId + " is passive seller");
-                    System.out.println("User " + userId + " received " + (qCurrent-qUserNeed) * localW);
+                    System.out.println("User " + userId + " received " + quantityToSell * localW);
                     user.setqCurrent(qUserNeed);
 
                     DealResult dealResult = new DealResult(true, -1, userId, quantityToSell * localW, quantityToSell);
@@ -231,13 +243,16 @@ public class SimCommon
                      */
 //                    cQ = cQ + (initW * initialQuantity) - (localW * (initialQuantity - qUserNeed));
 
+
+                    temp1 = 0;
+                    temp2 = 0;
+
                     // Calculate only the water that the seller use
-                    cQ = cQ + (localW * qUserNeed) ;
+                    cQ = cQ + (localW * qUserNeed);
+
 
                     // The money that the country need to pay to the seller
-                    cQ = cQ - ((qCurrent-qUserNeed) * localW);
-
-
+                    cQ = cQ - (localW * quantityToSell);
 
                 }
                 /*
@@ -255,21 +270,24 @@ public class SimCommon
                         System.out.println("Not enough water in outside pool !!!");
                         quantityToBuy = 0;
                     }
-                    else if(qUserNeed > qCurrent && quantityToBuy > outsideQ)
+                    else if(qUserNeed > qCurrent && quantityToBuy >= outsideQ)
                     {
                         System.out.println("Not enough water in outside pool !!! User " + userId + " bought amount of " + (outsideQ) + " and paid: " + outsideQ * localW);
                         user.setqCurrent(qCurrent + outsideQ);
                         quantityToBuy = outsideQ;
                     }
-                    else
+                    else if(qUserNeed > qCurrent && quantityToBuy < outsideQ)
                     {
                         System.out.println("User " + userId + " bought amount of " + quantityToBuy + " and paid: " + quantityToBuy * outsideW);
                         user.setqCurrent(qUserNeed);
                     }
+                    else
+                    {
+                        System.out.println("Unkown");
+                    }
 
 
                     // Calculate C(Q) for buyer
-                    // TODO: ask Eyal about the calculation of the buyer
                     cQ = cQ + (localW * qCurrent) + (outsideW * quantityToBuy);
 
                     // Allocate quantity from the outside Q
@@ -292,12 +310,15 @@ public class SimCommon
             // Calculate new w by C(Q)
             double NewW = cQ / NewQ;
 
-            double costOfAllWater = (localW * localQ) + (outsideW * outsideQ);
 
-            System.out.println("C(Q): " + cQ);
+
+
             System.out.println("New Q: " + NewQ);
             System.out.println("New W: " + NewW);
+            System.out.println("C(Q): " + cQ);  // It's ok that it's less than the cost of water because we the country pay to seller
             System.out.println("Current outside water allocation (OQ): " + outsideQ);
+            System.out.println("Cost of Current outside water allocation (Not Used): " + outsideQ * outsideW);
+            System.out.println("CQ + Cost of not used outside water): " + ( cQ + outsideQ * outsideW));
             System.out.println("Cost of all water: " + costOfAllWater);
 
             result = new SimulationResult(formatter.format(date), localQ+"", NewQ+"", localW+"", NewW+"", "", "");
@@ -345,29 +366,33 @@ public class SimCommon
             if(user.alpha - user.qCurrent/totalQ > 0)
             {
                 // A or B (Sellers)
-                if(user.lamda - averageEfficiency < 0)
+                if(user.lamda - averageEfficiency > 0)
                 {
                     // B
                     sumB++;
+                    user.isUserWasEfficiencyInLastSim = true;
                 }
                 else
                 {
                     // A
                     sumA++;
+                    user.isUserWasEfficiencyInLastSim = false;
                 }
             }
             else
             {
                 // C or D (Buyers)
-                if(user.lamda - averageEfficiency < 0)
+                if(user.lamda - averageEfficiency > 0)
                 {
                     // D
                     sumD++;
+                    user.isUserWasEfficiencyInLastSim = false;
                 }
                 else
                 {
                     // C
                     sumC++;
+                    user.isUserWasEfficiencyInLastSim = true;
                 }
             }
         }
@@ -437,6 +462,47 @@ public class SimCommon
     public static void setInstance(SimCommon instance) {
         SimCommon.instance = instance;
     }
+
+
+    public List<BaseUser> getBaseParametersForUsers()
+    {
+        if(baseUsers == null)
+        {
+            baseUsers = new ArrayList<BaseUser>();
+
+            int N = 100;
+
+            for (int i=0 ; i<N ; i++)
+            {
+                Random r = new Random();
+                double a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
+                r = new Random();
+                double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
+
+                baseUsers.add(new BaseUser(a, b));
+            }
+        }
+        else
+        {
+            System.out.println("Users Base Parameters already initialized");
+        }
+
+        return baseUsers;
+    }
+
+    public class BaseUser
+    {
+        public double a;
+        public double b;
+
+        public BaseUser(double a_user, double b_user)
+        {
+            a = a_user;
+            b = b_user;
+        }
+
+    }
+
 
     public ActiveSimulationController getActiveSimulationController() {
         return activeSimulationController;

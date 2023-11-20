@@ -16,6 +16,7 @@ public class User
     public double u; // Utility - u = f(qCurrent) - w * qCurrent
     public double lamda; // Lamda = f'(q) / f''(q)  * q
     public boolean isParticipatingNextSimulation;
+    public boolean isUserWasEfficiencyInLastSim = false;
 
     public DecimalFormat df = new DecimalFormat("####0.000");
 
@@ -44,6 +45,7 @@ public class User
     public void SetParams(double alpha, double w, double Q)
     {
         this.w = w;
+        this.alpha = alpha;
         this.qCurrent = alpha * Q;
         inverseDemandFunction();
         producedValue();
@@ -126,7 +128,7 @@ public class User
         }
         else
         {
-            this.v = Double.valueOf(df.format(a * Math.pow(qCurrent, b)));
+            this.v = a * Math.pow(qCurrent, b);
         }
     }
 
@@ -145,7 +147,7 @@ public class User
         }
 
         double Dv =  a * b * Math.pow(quantity, b-1);
-        return Double.valueOf(df.format(Dv));
+        return Dv;
     }
 
     /**
@@ -161,7 +163,7 @@ public class User
             return 0;
         }
         //        this.u =  a * Math.pow(quantity, b);
-        return Double.valueOf(df.format(a * Math.pow(quantity, b) - w*quantity));
+        return a * Math.pow(quantity, b) - w*quantity;
     }
 
 
@@ -201,7 +203,7 @@ public class User
 
         double base = (w /(a * b));
         double exponent = 1/(b-1);
-        q =  Double.valueOf(df.format(Math.pow(base, exponent)));
+        q =  Math.pow(base, exponent);
         // The quantity of each user can increase by 50% maximum
         if(q > (qCurrent * 2))
         {
@@ -235,7 +237,7 @@ public class User
         else
         {
             // Check as Buyer
-            double amountOfQuantityUserCanBuy = Double.valueOf(df.format(getq() - getqCurrent()));
+            double amountOfQuantityUserCanBuy = getq() - getqCurrent();
             for(double x = 0; x <= amountOfQuantityUserCanBuy; x += 0.001)
             {
                 // u = f(q)-w*q + x * demandfunction = efficiency = money
