@@ -167,7 +167,7 @@ public class PassiveSimulationController extends Pane
 
         owTextFieldPassive.setText("3");
 
-        oqTextFieldPassive.setText("400");
+        oqTextFieldPassive.setText("200");
 
         nTextFieldPassive.setText("100");
 
@@ -316,12 +316,6 @@ public class PassiveSimulationController extends Pane
             String OQString = oqTextFieldPassive.getText();
             ow = Double.parseDouble(owString);
             OQ = Double.parseDouble(OQString);
-
-            // Update params of user
-            for (int i=0 ; i<N ; i++)
-            {
-                userList.get(i).SetParams(Q/N/Q, w, Q);
-            }
         }
 
         numberOfRun ++;
