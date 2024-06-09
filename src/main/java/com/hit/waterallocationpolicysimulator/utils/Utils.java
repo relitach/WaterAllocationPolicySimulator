@@ -187,4 +187,40 @@ public class Utils
         }
     }
 
+    public static void printDistribution()
+    {
+
+
+    }
+
+    public static void printABCDToFile(String abcdText, String path)
+    {
+        File file = new File(path);
+        FileWriter outputfile = null;
+        BufferedWriter bufferedWriter = null;
+        try
+        {
+            file.createNewFile();
+            outputfile = new FileWriter(file);
+            bufferedWriter = new BufferedWriter(outputfile);
+            bufferedWriter.write(abcdText);
+            System.out.println("Successfully wrote to the file: " + path);
+        }
+        catch (IOException e)
+        {
+            System.out.println("An error occurred while writing to the file.");
+            e.printStackTrace();
+        }
+        finally {
+            if (bufferedWriter != null) {
+                try {
+                    bufferedWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
 }

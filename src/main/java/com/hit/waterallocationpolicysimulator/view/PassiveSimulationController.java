@@ -331,15 +331,20 @@ public class PassiveSimulationController extends Pane
                 passiveTable.getItems().add(result);
 //                Q = Double.valueOf(result.getNewQ());
 //                w = Double.valueOf(result.getNewW());
-                Utils.writeUserListToCSVFile(userList, openCsvFileTextFieldPassive.getText() + "\\Passive_" + result.getYear()
+                Utils.writeUserListToCSVFile(userList, openCsvFileTextFieldPassive.getText() + "\\NumberOfRun_" + numberOfRun + "_Passive_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
 
-                Utils.writeDealsListToCSVFile(result.dealResults, openCsvFileTextFieldPassive.getText() + "\\Passive_Deals_" + result.getYear()
+                Utils.writeDealsListToCSVFile(result.dealResults, openCsvFileTextFieldPassive.getText() + "\\NumberOfRun_" + numberOfRun + "_Passive_Deals_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
+
+                Utils.printABCDToFile(result.abcdResults, openCsvFileTextFieldPassive.getText() + "\\NumberOfRun_" + numberOfRun + "_Passive_ABCD_Result_" + result.getYear()
+                        .replace('/','_')
+                        .replace(' ','_')
+                        .replace(':','_')+ ".txt");
             }
         }
         else

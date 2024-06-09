@@ -12,6 +12,7 @@ public class SimulationResult
     private String AmountOfDeals;
     private String AverageCost;
     public ArrayList<DealResult> dealResults;
+    public String abcdResults;
 
     public SimulationResult(String year, String Q, String NewQ, String w, String NewW, String AmountOfDeals, String AverageCost) {
         this.year = year;

@@ -1,5 +1,6 @@
 package com.hit.waterallocationpolicysimulator.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.hit.waterallocationpolicysimulator.model.DealResult;
 import com.hit.waterallocationpolicysimulator.model.SimulationResult;
 import com.hit.waterallocationpolicysimulator.model.User;
@@ -8,12 +9,17 @@ import com.hit.waterallocationpolicysimulator.view.ConfigurationController;
 import com.hit.waterallocationpolicysimulator.view.PassiveSimulationController;
 import com.hit.waterallocationpolicysimulator.view.ActiveSimulationController;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class SimCommon
@@ -29,6 +35,7 @@ public class SimCommon
 
     public List<BaseUser> baseUsers = null;
 
+    public ObjectMapper mapper = new ObjectMapper();
     public static SimCommon getInstance() {
         if (instance == null) {
             instance = new SimCommon();
@@ -49,8 +56,11 @@ public class SimCommon
 
         double totalQ = localQ;
 
+        int buyersCount = 0;
+        int sellersCount = 0;
+        double totalBeginningEfficiency = 0;
 
-        // Check which player gonna play in the next simulation
+        // Check which player gonna play in the next simulation and take more data for statistics
         for (User user : usersList)
         {
             user.CheckIsUserPlayNextRound();
@@ -58,8 +68,32 @@ public class SimCommon
             {
                 System.out.println("User " + user.getId() + " is not play in the next simulation");
             }
+
+            // Count buyers and sellers for distribution
+            if(user.getq() < user.getqCurrent())
+            {
+                sellersCount++;
+            }
+            else
+            {
+                buyersCount++;
+            }
+
+
+            totalBeginningEfficiency += user.efficiencyFunction();
         }
 
+        // Calculate median age
+        // Sort users by age
+        Collections.sort(usersList, Comparator.comparingDouble(User::efficiencyFunction));
+
+        double medianEfficiency;
+        int size = usersList.size();
+        if (size % 2 == 0) {
+            medianEfficiency = (usersList.get(size / 2 - 1).efficiencyFunction() + usersList.get(size / 2).efficiencyFunction()) / 2.0;
+        } else {
+            medianEfficiency = usersList.get(size / 2).efficiencyFunction();
+        }
 
         /*
         #####################################
@@ -90,7 +124,7 @@ public class SimCommon
                         System.out.println("User id: " + user.getId() + " is seller");
 
 
-                        // User is seller
+                        // User is seller. look for buyer
                         for (User buyer : usersList)
                         {
                             // Validate user is not do deal with him self
@@ -330,10 +364,6 @@ public class SimCommon
             System.out.println("Policy not supported");
         }
 
-
-
-
-
         result.dealResults = deals;
 
 
@@ -396,11 +426,41 @@ public class SimCommon
                 }
             }
         }
+        String abcdResult = "";
 
-        System.out.println("Total users in case A: " + sumA);
-        System.out.println("Total users in case B: " + sumB);
-        System.out.println("Total users in case C: " + sumC);
-        System.out.println("Total users in case D: " + sumD);
+        double averageBeginningEfficiency = totalBeginningEfficiency / usersList.size();
+
+        abcdResult += "##### Before simulation #####" + '\n';
+        abcdResult += "Total buyers: " + buyersCount +  '\n';
+        abcdResult += "Total sellers: " + sellersCount +  '\n';
+        abcdResult += "Average Efficiency: " + averageBeginningEfficiency +  '\n';
+        abcdResult += "Median Efficiency: " + medianEfficiency +  '\n';
+        if(medianEfficiency > averageBeginningEfficiency)
+        {
+            abcdResult += "Most for non efficiency" +  '\n';
+        }
+        else
+        {
+            abcdResult += "Most for efficiency" +  '\n';
+        }
+
+
+
+        abcdResult +=  "\n\n\n";
+        abcdResult += "##### After simulation #####" + '\n';
+        abcdResult += "Total users in case A: " + sumA + '\n';
+        abcdResult += "Total users in case B: " + sumB + '\n';
+        abcdResult += "Total users in case C: " + sumC + '\n';
+        abcdResult += "Total users in case D: " + sumD + '\n';
+
+        System.out.println(abcdResult);
+
+
+//        System.out.println("Total users in case A: " + sumA);
+//        System.out.println("Total users in case B: " + sumB);
+//        System.out.println("Total users in case C: " + sumC);
+//        System.out.println("Total users in case D: " + sumD);
+        result.abcdResults = abcdResult;
 
         return result;
     }
@@ -468,18 +528,40 @@ public class SimCommon
     {
         if(baseUsers == null)
         {
-            baseUsers = new ArrayList<BaseUser>();
-
-            int N = 100;
-
-            for (int i=0 ; i<N ; i++)
+            try
             {
-                Random r = new Random();
-                double a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
-                r = new Random();
-                double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
+                // Read the JSON file and convert it to a List of User objects
+                File file = new File("users.json");
+                baseUsers = mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(ArrayList.class, BaseUser.class));
+                System.out.println("List of User objects loaded from users.json: " + baseUsers);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            // File users.json not exist
+            if(baseUsers == null)
+            {
+                baseUsers = new ArrayList<BaseUser>();
 
-                baseUsers.add(new BaseUser(a, b));
+                int N = 100;
+
+                for (int i=0 ; i<N ; i++)
+                {
+                    Random r = new Random();
+                    double a = 1 + (3 - 1) * r.nextDouble(); // a: [1 - 3]
+                    r = new Random();
+                    double b = 0.5 + (0.99 - 0.5) * r.nextDouble(); // b: [0.5 - 0.99]
+
+                    baseUsers.add(new BaseUser(a, b));
+                }
+                try
+                {
+                    mapper.writeValue(new File("users.json"), baseUsers);
+                    System.out.println("baseUsers object has been converted to users.json");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         else
@@ -490,17 +572,33 @@ public class SimCommon
         return baseUsers;
     }
 
-    public class BaseUser
+    public static class BaseUser
     {
         public double a;
         public double b;
 
-        public BaseUser(double a_user, double b_user)
+        @JsonCreator
+        public BaseUser(@JsonProperty("a") double a, @JsonProperty("b") double b)
         {
-            a = a_user;
-            b = b_user;
+            this.a = a;
+            this.b = b;
         }
 
+        public double getA() {
+            return a;
+        }
+
+        public void setA(double a) {
+            this.a = a;
+        }
+
+        public double getB() {
+            return b;
+        }
+
+        public void setB(double b) {
+            this.b = b;
+        }
     }
 
 
@@ -535,6 +633,8 @@ public class SimCommon
     public void setAboutController(AboutController aboutController) {
         this.aboutController = aboutController;
     }
+
+
 
 
 

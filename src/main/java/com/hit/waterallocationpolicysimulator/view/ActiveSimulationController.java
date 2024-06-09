@@ -213,6 +213,8 @@ public class ActiveSimulationController extends Pane
                 userList.add(tempUser);
             }
 
+
+
 //            Q = 1;
 //            w = 0.7;
 //
@@ -336,6 +338,7 @@ public class ActiveSimulationController extends Pane
             System.out.println("w = " + w + ", Q = " + Q);
 
             System.out.println("#### Run Active Simulation ####");
+
             SimulationResult result = SimCommon.getInstance().runSimulation(SimTypes.PolicyType.QUANTITY, userList, w, Q, 0, 0);
 
             if(result != null)
@@ -343,16 +346,23 @@ public class ActiveSimulationController extends Pane
                 activeTable.getItems().add(result);
 //                Q = Double.valueOf(result.getNewQ());
                 w = Double.valueOf(result.getNewW());
-                Utils.writeUserListToCSVFile(userList, outputFolderPathTextFieldActive.getText() + "\\Active_" + result.getYear()
+                Utils.writeUserListToCSVFile(userList, outputFolderPathTextFieldActive.getText() + "\\NumberOfRun_" + numberOfRun + "_Active_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
 
 
-                Utils.writeDealsListToCSVFile(result.dealResults, outputFolderPathTextFieldActive.getText() + "\\Active_Deals_" + result.getYear()
+                Utils.writeDealsListToCSVFile(result.dealResults, outputFolderPathTextFieldActive.getText() + "\\NumberOfRun_" + numberOfRun + "_Active_Deals_" + result.getYear()
                         .replace('/','_')
                         .replace(' ','_')
                         .replace(':','_')+ ".csv");
+
+
+                Utils.printABCDToFile(result.abcdResults, outputFolderPathTextFieldActive.getText() + "\\NumberOfRun_" + numberOfRun + "_Active_ABCD_Result_" + result.getYear()
+                        .replace('/','_')
+                        .replace(' ','_')
+                        .replace(':','_')+ ".txt");
+
             }
         }
         else
